@@ -204,41 +204,135 @@
         </div>
     </div>
     <script>
-        // MÍNIMA - SIN MANTENIMIENTO
-        document.addEventListener('click', function (e) {
-            const button = e.target.closest('button.flex.items-center.space-x-2.bg-blue-600\\/20');
+        // SOLUCIÓN AUTOMÁTICA - SIN MANTENIMIENTO
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('🌐 Iniciando sistema de idiomas automático');
 
-            if (button) {
-                e.preventDefault();
+            // 1. CONFIGURACIÓN BÁSICA
+            const STORAGE_KEY = 'preferredLanguage';
+            let currentLang = localStorage.getItem(STORAGE_KEY) || 'es';
 
-                const currentLang = localStorage.getItem('preferredLanguage') || 'es';
-                const newLang = currentLang === 'es' ? 'en' : 'es';
+            // 2. DETECTAR i18n AUTOMÁTICAMENTE
+            function findI18n() {
+                // Buscar en diferentes lugares posibles
+                const sources = [
+                    window.We,
+                    window.i18n,
+                    window._i18nInstance
+                ];
 
-                localStorage.setItem('preferredLanguage', newLang);
+                for (const source of sources) {
+                    if (source && typeof source.changeLanguage === 'function') {
+                        console.log('✅ i18n encontrado:', source);
+                        return source;
+                    }
+                }
 
-                // Intentar con i18n si existe
-                if (window.We?.changeLanguage) {
-                    window.We.changeLanguage(newLang).then(() => {
-                        location.reload();
+                // Buscar en propiedades del objeto window
+                for (const key in window) {
+                    try {
+                        const obj = window[key];
+                        if (obj && typeof obj.changeLanguage === 'function' && obj.t) {
+                            console.log('✅ i18n encontrado en:', key);
+                            return obj;
+                        }
+                    } catch (e) { }
+                }
+
+                return null;
+            }
+
+            // 3. SISTEMA DE BOTONES UNIVERSAL
+            function setupUniversalButtons() {
+                const observer = new MutationObserver(() => {
+                    const buttons = document.querySelectorAll([
+                        'button.flex.items-center.space-x-2.bg-blue-600\\/20',
+                        '[data-lang]',
+                        '.language-btn'
+                    ].join(','));
+
+                    buttons.forEach(button => {
+                        if (!button.hasAttribute('data-lang-bound')) {
+                            button.setAttribute('data-lang-bound', 'true');
+
+                            button.addEventListener('click', async (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+
+                                const newLang = currentLang === 'es' ? 'en' : 'es';
+                                await changeLanguage(newLang);
+                            });
+                        }
                     });
-                } else {
-                    location.reload();
+                });
+
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+            }
+
+            // 4. CAMBIO DE IDIOMA INTELIGENTE
+            async function changeLanguage(newLang) {
+                console.log(`🔄 Cambiando a: ${newLang}`);
+
+                const i18n = findI18n();
+                currentLang = newLang;
+                localStorage.setItem(STORAGE_KEY, newLang);
+
+                if (i18n) {
+                    try {
+                        await i18n.changeLanguage(newLang);
+                        console.log('✅ Idioma cambiado via i18n');
+                    } catch (error) {
+                        console.warn('❌ Error con i18n:', error);
+                    }
+                }
+
+                // Actualizar botones visualmente
+                updateButtonTexts(newLang);
+
+                // Recargar para cambios completos
+                setTimeout(() => {
+                    window.location.reload();
+                }, 300);
+            }
+
+            // 5. ACTUALIZAR TEXTO DE BOTONES (automático)
+            function updateButtonTexts(lang) {
+                document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20').forEach(btn => {
+                    const span = btn.querySelector('span');
+                    if (span) {
+                        span.textContent = span.textContent.includes('footer.language')
+                            ? `footer.language: ${lang.toUpperCase()}`
+                            : lang.toUpperCase();
+                    }
+                });
+            }
+
+            // 6. APLICAR IDIOMA GUARDADO AL CARGAR
+            function applySavedLanguage() {
+                updateButtonTexts(currentLang);
+
+                // Si hay un i18n disponible, forzar el idioma
+                const i18n = findI18n();
+                if (i18n && i18n.language !== currentLang) {
+                    i18n.changeLanguage(currentLang).catch(console.warn);
                 }
             }
+
+            // INICIALIZAR
+            setupUniversalButtons();
+            applySavedLanguage();
+
+            console.log('✅ Sistema de idiomas listo. Lenguaje:', currentLang);
         });
 
-        // Aplicar idioma al cargar
-        const savedLang = localStorage.getItem('preferredLanguage');
-        if (savedLang) {
-            document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20').forEach(btn => {
-                const span = btn.querySelector('span');
-                if (span) {
-                    span.textContent = span.textContent.includes('footer.language')
-                        ? `footer.language: ${savedLang.toUpperCase()}`
-                        : savedLang.toUpperCase();
-                }
-            });
-        }
+        // Comando rápido para desarrollo
+        window.switchLanguage = (lang = 'en') => {
+            localStorage.setItem('preferredLanguage', lang);
+            location.reload();
+        };
     </script>
 </body>
 
