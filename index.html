@@ -204,102 +204,147 @@
         </div>
     </div>
     <script>
-        // Manejo del cambio de idioma - SOLUCIÓN DEFINITIVA
+        // Manejo del cambio de idioma - ACCESO DIRECTO AL BUNDLE
         document.addEventListener('DOMContentLoaded', function () {
             console.log('=== INICIALIZANDO SISTEMA DE IDIOMAS ===');
 
-            // Esperar a que i18n esté completamente inicializado
-            function waitForI18n() {
-                return new Promise((resolve) => {
-                    if (window.We && window.We.isInitialized) {
-                        console.log('i18n ya está inicializado');
-                        resolve();
-                    } else {
-                        console.log('Esperando inicialización de i18n...');
-                        const checkInterval = setInterval(() => {
-                            if (window.We && window.We.isInitialized) {
-                                clearInterval(checkInterval);
-                                console.log('i18n inicializado después de espera');
-                                resolve();
+            // Función para encontrar la instancia de i18n en el bundle
+            function findI18nInstance() {
+                // Intentar diferentes formas de acceder a i18n
+                const possiblePaths = [
+                    () => window.We, // Intento directo
+                    () => window.i18n, // Por si acaso
+                    () => {
+                        // Buscar en el contexto de React
+                        const root = document.getElementById('root');
+                        if (root && root.__reactInternalInstance$) {
+                            return root.__reactInternalInstance$._debugOwner.stateNode.props.i18n;
+                        }
+                        return null;
+                    },
+                    () => {
+                        // Buscar en variables globales
+                        for (let key in window) {
+                            if (window[key] && typeof window[key] === 'object' &&
+                                window[key].changeLanguage && window[key].t) {
+                                console.log('Encontrado i18n en:', key);
+                                return window[key];
                             }
-                        }, 100);
-
-                        // Timeout de seguridad
-                        setTimeout(() => {
-                            clearInterval(checkInterval);
-                            console.log('Timeout - i18n no se inicializó, continuando...');
-                            resolve();
-                        }, 3000);
+                        }
+                        return null;
                     }
-                });
+                ];
+
+                for (let getter of possiblePaths) {
+                    try {
+                        const instance = getter();
+                        if (instance && typeof instance.changeLanguage === 'function') {
+                            console.log('✅ i18n encontrado via:', getter.toString().slice(0, 100));
+                            return instance;
+                        }
+                    } catch (e) {
+                        // Continuar con el siguiente método
+                    }
+                }
+
+                console.warn('❌ No se pudo encontrar i18n instance');
+                return null;
             }
 
-            // Configurar botones de idioma
-            async function setupLanguageButtons() {
-                await waitForI18n();
-
+            // Sistema de cambio de idioma universal
+            function setupUniversalLanguageSwitcher() {
                 const languageButtons = document.querySelectorAll('button.flex.items-center.space-x-2.text-white.bg-blue-600\\/20, button.flex.items-center.space-x-2.text-gray-400.bg-blue-600\\/20');
 
-                console.log('Botones de idioma configurados:', languageButtons.length);
+                console.log('Configurando botones de idioma:', languageButtons.length);
 
-                languageButtons.forEach((languageButton, index) => {
-                    // Remover event listeners previos para evitar duplicados
-                    const newButton = languageButton.cloneNode(true);
-                    languageButton.parentNode.replaceChild(newButton, languageButton);
+                languageButtons.forEach((button, index) => {
+                    // Crear nuevo botón para evitar duplicados
+                    const newButton = button.cloneNode(true);
+                    button.parentNode.replaceChild(newButton, button);
 
                     newButton.addEventListener('click', async function (e) {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        console.log(`Botón de idioma ${index + 1} clickeado`);
+                        console.log(`🌐 Botón de idioma ${index + 1} clickeado`);
 
                         try {
-                            // Usar We (i18n instance) en lugar de window.i18n
-                            const i18n = window.We;
+                            // Intentar con el sistema del bundle primero
+                            const i18n = findI18nInstance();
 
-                            if (i18n && typeof i18n.changeLanguage === 'function') {
+                            if (i18n && i18n.changeLanguage) {
+                                console.log('🎯 Usando sistema i18n del bundle');
+
                                 const currentLang = i18n.language || 'es';
                                 const newLang = currentLang === 'es' ? 'en' : 'es';
 
-                                console.log('Cambiando idioma de', currentLang, 'a', newLang);
-                                console.log('Estado i18n:', {
-                                    initialized: i18n.isInitialized,
-                                    language: i18n.language,
-                                    languages: i18n.languages
-                                });
+                                console.log(`🔄 Cambiando de ${currentLang} a ${newLang}`);
 
-                                // Cambiar idioma
                                 await i18n.changeLanguage(newLang);
+                                console.log('✅ Idioma cambiado en el sistema');
 
-                                console.log('Idioma cambiado exitosamente a:', newLang);
-                                console.log('Nuevo estado:', i18n.language);
-
-                                // Actualizar texto de TODOS los botones inmediatamente
+                                // Actualizar UI inmediatamente
                                 updateAllLanguageButtons(newLang);
 
-                                // Recargar para aplicar cambios en toda la página
+                                // Forzar recarga para aplicar cambios
                                 setTimeout(() => {
+                                    console.log('🔄 Recargando página...');
                                     window.location.reload();
-                                }, 150);
+                                }, 200);
 
                             } else {
-                                console.warn('i18n (We) no disponible o no inicializado, usando fallback');
-                                console.log('We disponible:', !!window.We);
-                                console.log('We methods:', window.We ? Object.keys(window.We) : 'No disponible');
-                                fallbackLanguageSwitch();
+                                // Sistema fallback - cambiar manualmente
+                                console.log('🔄 Usando sistema fallback');
+                                manualLanguageSwitch();
                             }
+
                         } catch (error) {
-                            console.error('Error crítico cambiando idioma:', error);
-                            fallbackLanguageSwitch();
+                            console.error('💥 Error crítico:', error);
+                            manualLanguageSwitch();
                         }
                     });
                 });
 
-                // Actualizar botones con el idioma actual
-                updateButtonsWithCurrentLanguage();
+                // Actualizar botones con el estado actual
+                updateButtonStates();
             }
 
-            // Función para actualizar TODOS los botones de idioma
+            // Sistema manual de cambio de idioma (fallback)
+            function manualLanguageSwitch() {
+                console.log('🔄 Activando cambio manual de idioma');
+
+                const buttons = document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20');
+                let currentLang = 'es';
+
+                // Determinar idioma actual
+                buttons.forEach(button => {
+                    const span = button.querySelector('span');
+                    if (span) {
+                        const text = span.textContent.trim();
+                        if (text.includes('EN')) currentLang = 'en';
+                        if (text.includes('footer.language: EN')) currentLang = 'en';
+                    }
+                });
+
+                const newLang = currentLang === 'es' ? 'en' : 'es';
+                console.log(`🔄 Cambiando manualmente de ${currentLang} a ${newLang}`);
+
+                // Guardar preferencia en localStorage
+                localStorage.setItem('preferredLanguage', newLang);
+
+                // Actualizar todos los botones
+                updateAllLanguageButtons(newLang);
+
+                // Mostrar confirmación
+                showLanguageChangeFeedback(newLang);
+
+                // Recargar para aplicar cambios
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
+            }
+
+            // Actualizar todos los botones de idioma
             function updateAllLanguageButtons(lang) {
                 const buttons = document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20');
                 buttons.forEach(button => {
@@ -311,74 +356,103 @@
                             span.textContent = lang.toUpperCase();
                         }
                     }
+
+                    // Actualizar tooltip/aria-label
+                    button.setAttribute('title', `Change to ${lang === 'es' ? 'Spanish' : 'English'}`);
+                    button.setAttribute('aria-label', `Current language: ${lang.toUpperCase()}`);
                 });
+
+                console.log(`✅ Botones actualizados a: ${lang.toUpperCase()}`);
             }
 
-            // Actualizar botones con el idioma actual del sistema
-            function updateButtonsWithCurrentLanguage() {
-                const i18n = window.We;
-                if (i18n && i18n.language) {
-                    const currentLang = i18n.language;
-                    console.log('Actualizando botones con idioma:', currentLang);
-                    updateAllLanguageButtons(currentLang);
+            // Actualizar estados de botones basado en preferencia guardada
+            function updateButtonStates() {
+                const savedLang = localStorage.getItem('preferredLanguage') || 'es';
+                console.log(`💾 Idioma guardado: ${savedLang}`);
+
+                updateAllLanguageButtons(savedLang);
+            }
+
+            // Mostrar feedback visual del cambio
+            function showLanguageChangeFeedback(lang) {
+                const feedback = document.createElement('div');
+                feedback.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 10000;
+            font-weight: 600;
+            animation: slideIn 0.3s ease-out;
+        `;
+
+                feedback.textContent = `🌍 Language changed to ${lang.toUpperCase()}`;
+                document.body.appendChild(feedback);
+
+                setTimeout(() => {
+                    feedback.style.animation = 'slideOut 0.3s ease-in';
+                    setTimeout(() => feedback.remove(), 300);
+                }, 2000);
+
+                // Agregar estilos de animación si no existen
+                if (!document.querySelector('#language-feedback-styles')) {
+                    const styles = document.createElement('style');
+                    styles.id = 'language-feedback-styles';
+                    styles.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
+                    document.head.appendChild(styles);
                 }
             }
 
-            // Fallback si i18n no funciona
-            function fallbackLanguageSwitch() {
-                const buttons = document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20');
-                buttons.forEach(button => {
-                    const span = button.querySelector('span');
-                    if (span) {
-                        const currentText = span.textContent.trim();
-                        let newText;
+            // Inicializar el sistema
+            setupUniversalLanguageSwitcher();
 
-                        if (currentText.includes('footer.language')) {
-                            newText = currentText.includes('ES') ? 'footer.language: EN' : 'footer.language: ES';
-                        } else {
-                            newText = currentText === 'ES' ? 'EN' : 'ES';
-                        }
-
-                        span.textContent = newText;
-                    }
-                });
-
-                // Mostrar mensaje temporal
-                const tempMsg = document.createElement('div');
-                tempMsg.style.cssText = 'position:fixed; top:20px; right:20px; background:green; color:white; padding:10px; border-radius:5px; z-index:10000;';
-                tempMsg.textContent = 'Idioma cambiado ✓';
-                document.body.appendChild(tempMsg);
-                setTimeout(() => tempMsg.remove(), 2000);
-            }
-
-            // Iniciar configuración
-            setupLanguageButtons();
-
-            // Debug adicional
+            // Debug avanzado después de un delay
             setTimeout(() => {
-                console.log('=== DEBUG I18N COMPLETO ===');
-                console.log('We (i18n) disponible:', !!window.We);
-                console.log('We inicializado:', window.We?.isInitialized);
-                console.log('Idioma actual:', window.We?.language);
-                console.log('Idiomas disponibles:', window.We?.languages);
-                console.log('Recursos cargados:', window.We?.options?.resources ? 'Sí' : 'No');
-                console.log('Métodos disponibles:', window.We ? Object.keys(window.We).filter(k => typeof window.We[k] === 'function') : 'No disponible');
+                console.log('=== DEBUG AVANZADO ===');
+                console.log('Buscando i18n en el bundle...');
 
-                // Verificar que los botones tienen listeners
-                const buttons = document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20');
-                console.log('Botones de idioma en DOM:', buttons.length);
-            }, 2000);
+                const i18n = findI18nInstance();
+                if (i18n) {
+                    console.log('🎉 i18n ENCONTRADO:', {
+                        language: i18n.language,
+                        initialized: i18n.isInitialized,
+                        languages: i18n.languages
+                    });
+                } else {
+                    console.log('❌ i18n no encontrado, usando sistema manual');
+                    console.log('Variables globales disponibles:', Object.keys(window).filter(k =>
+                        typeof window[k] === 'object' && window[k] !== null
+                    ));
+                }
+            }, 3000);
         });
 
-        // Exponer i18n globalmente para debugging
-        window.getI18nState = function () {
-            return {
-                instance: window.We,
-                initialized: window.We?.isInitialized,
-                language: window.We?.language,
-                languages: window.We?.languages,
-                resources: window.We?.options?.resources
-            };
+        // Función global para debugging desde consola
+        window.debugLanguageSystem = function () {
+            console.log('=== DEBUG MANUAL ===');
+            console.log('LocalStorage preferredLanguage:', localStorage.getItem('preferredLanguage'));
+            console.log('Botones en DOM:', document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20').length);
+
+            const i18n = window.We || window.i18n;
+            if (i18n) {
+                console.log('i18n instance found:', i18n);
+                console.log('Current language:', i18n.language);
+            } else {
+                console.log('No i18n instance found in global scope');
+            }
         };
     </script>
 </body>
