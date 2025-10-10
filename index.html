@@ -204,223 +204,222 @@
         </div>
     </div>
     <script>
-        // SOLUCIÓN DEFINITIVA - INYECCIÓN EN EL BUNDLE I18N
+        // SOLUCIÓN DEFINITIVA - INTERCEPTAR EL BUNDLE ANTES DE QUE INICIALICE
         document.addEventListener('DOMContentLoaded', function () {
-            console.log('🚀 Iniciando sistema de idiomas mejorado');
+            console.log('🚀 Iniciando interceptación del bundle i18n');
 
-            // Estrategia 1: Interceptar la inicialización de i18n del bundle
-            function hookIntoI18n() {
-                console.log('🔍 Buscando punto de entrada de i18n...');
+            // 1. PREVENIR QUE EL BUNDLE SOBREESCRIBA NUESTRO IDIOMA
+            const savedLang = localStorage.getItem('preferredLanguage') || 'es';
+            console.log('💾 Idioma preferido guardado:', savedLang);
 
-                // El bundle usa 'We' como instancia principal de i18n
-                // Necesitamos capturarla durante la inicialización
+            // 2. INTERCEPTAR LA INICIALIZACIÓN DEL BUNDLE
+            let bundleI18nInstance = null;
 
-                // Método 1: Sobrescribir el método changeLanguage para capturar la instancia
-                const originalInit = window.We?.init;
-                if (window.We && originalInit) {
-                    console.log('✅ Encontrado We.init, hookeando...');
-                    window.We.init = function (options, callback) {
-                        console.log('🎯 i18n init interceptado');
-                        const result = originalInit.call(this, options, callback);
-                        // Exponer globalmente después de init
-                        window._i18nInstance = this;
-                        console.log('📡 i18n instance expuesta como window._i18nInstance');
-                        return result;
+            // Método A: Sobrescribir el constructor de i18n
+            if (window.We) {
+                console.log('🎯 Bundle We encontrado, interceptando...');
+
+                // Guardar referencia original
+                const OriginalI18n = window.We.constructor;
+
+                // Crear wrapper que fuerza nuestro idioma
+                function PatchedI18n() {
+                    const instance = OriginalI18n.apply(this, arguments);
+                    bundleI18nInstance = instance;
+
+                    // Sobrescribir init para forzar nuestro idioma
+                    const originalInit = instance.init;
+                    instance.init = function (options, callback) {
+                        console.log('🔧 Interceptando init del bundle...');
+
+                        // Forzar el idioma guardado
+                        if (options) {
+                            options.lng = savedLang;
+                        } else {
+                            options = { lng: savedLang };
+                        }
+
+                        console.log('🎯 Forzando idioma en init:', savedLang);
+
+                        return originalInit.call(this, options, function (err, t) {
+                            console.log('✅ Bundle inicializado con idioma:', this.language);
+                            if (callback) callback(err, t);
+                        });
                     };
+
+                    // Sobrescribir changeLanguage para sincronizar con nuestro sistema
+                    const originalChangeLanguage = instance.changeLanguage;
+                    instance.changeLanguage = function (lng, callback) {
+                        console.log('🌐 Bundle changeLanguage interceptado:', lng);
+                        localStorage.setItem('preferredLanguage', lng);
+                        return originalChangeLanguage.call(this, lng, callback);
+                    };
+
+                    return instance;
                 }
 
-                // Método 2: Buscar en el React context
-                setTimeout(() => {
-                    const root = document.getElementById('root');
-                    if (root && root._reactRootContainer) {
-                        console.log('🔍 Buscando en React root...');
-                        try {
-                            const fiberRoot = root._reactRootContainer._internalRoot;
-                            if (fiberRoot && fiberRoot.current) {
-                                let node = fiberRoot.current;
-                                while (node) {
-                                    if (node.stateNode && node.stateNode.props && node.stateNode.props.i18n) {
-                                        window._i18nInstance = node.stateNode.props.i18n;
-                                        console.log('✅ i18n encontrado en React props');
-                                        break;
-                                    }
-                                    node = node.child;
-                                }
-                            }
-                        } catch (e) {
-                            console.log('❌ No se pudo acceder a React internals');
-                        }
-                    }
-                }, 1000);
+                // Reemplazar el constructor
+                PatchedI18n.prototype = OriginalI18n.prototype;
+                window.We.constructor = PatchedI18n;
             }
 
-            // Estrategia 2: Sistema basado en eventos del DOM
-            function setupDOMBasedLanguageSystem() {
-                console.log('🔄 Configurando sistema basado en DOM');
+            // 3. SISTEMA DE BOTONES MEJORADO
+            function setupLanguageButtons() {
+                const buttons = document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20');
 
-                const languageButtons = document.querySelectorAll('button.flex.items-center.space-x-2.text-white.bg-blue-600\\/20, button.flex.items-center.space-x-2.text-gray-400.bg-blue-600\\/20');
+                console.log('🔘 Configurando botones:', buttons.length);
 
-                // Crear un sistema de eventos personalizado
-                const languageEvent = new Event('languageChange');
-
-                languageButtons.forEach((button, index) => {
+                buttons.forEach((button, index) => {
                     const newButton = button.cloneNode(true);
                     button.parentNode.replaceChild(newButton, button);
 
-                    newButton.addEventListener('click', async function (e) {
+                    newButton.addEventListener('click', function (e) {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        console.log(`🌐 Botón ${index + 1} clickeado - Activando cambio de idioma`);
+                        console.log(`🌐 Botón ${index + 1} clickeado`);
 
-                        // Determinar nuevo idioma basado en el texto actual
+                        // Determinar nuevo idioma
                         const currentText = newButton.querySelector('span').textContent.trim();
-                        let newLang = 'en';
-                        if (currentText.includes('EN') || currentText.includes('footer.language: EN')) {
-                            newLang = 'es';
-                        }
+                        let newLang = currentText.includes('ES') ? 'en' : 'es';
 
                         console.log(`🔄 Cambiando a: ${newLang}`);
 
-                        // Intentar método del bundle primero
-                        if (attemptBundleLanguageChange(newLang)) {
-                            return;
-                        }
-
-                        // Fallback al sistema manual
-                        activateManualLanguageSystem(newLang);
+                        // Estrategia múltiple
+                        changeLanguageWithFallback(newLang);
                     });
                 });
+
+                // Aplicar idioma guardado a los botones
+                updateButtonTexts(savedLang);
             }
 
-            // Intentar usar el sistema del bundle
-            function attemptBundleLanguageChange(newLang) {
-                console.log('🎯 Intentando cambio via bundle...');
+            // 4. ESTRATEGIA DE CAMBIO DE IDIOMA CON MÚLTIPLES FALLBACKS
+            function changeLanguageWithFallback(newLang) {
+                console.log('🎯 Ejecutando cambio de idioma para:', newLang);
 
-                // Método 1: Usar We si está disponible
-                if (window.We && window.We.changeLanguage) {
-                    console.log('✅ Usando We.changeLanguage');
-                    window.We.changeLanguage(newLang).then(() => {
-                        console.log('✅ Bundle: Idioma cambiado exitosamente');
-                        updateUIAndReload(newLang);
+                // Estrategia 1: Usar bundle si está disponible
+                if (bundleI18nInstance && bundleI18nInstance.changeLanguage) {
+                    console.log('✅ Usando bundle i18n');
+                    bundleI18nInstance.changeLanguage(newLang).then(() => {
+                        console.log('✅ Bundle: Idioma cambiado');
+                        finalizeLanguageChange(newLang);
                     }).catch(err => {
-                        console.warn('❌ Bundle: Error cambiando idioma:', err);
-                        return false;
+                        console.warn('❌ Bundle falló, usando estrategia 2');
+                        strategy2_changeLanguage(newLang);
                     });
-                    return true;
+                    return;
                 }
 
-                // Método 2: Usar instancia capturada
-                if (window._i18nInstance) {
-                    console.log('✅ Usando _i18nInstance');
-                    window._i18nInstance.changeLanguage(newLang).then(() => {
-                        updateUIAndReload(newLang);
+                // Estrategia 2: Usar We global
+                if (window.We && window.We.changeLanguage) {
+                    console.log('✅ Usando We global');
+                    window.We.changeLanguage(newLang).then(() => {
+                        finalizeLanguageChange(newLang);
+                    }).catch(() => {
+                        strategy2_changeLanguage(newLang);
                     });
-                    return true;
+                    return;
                 }
 
-                // Método 3: Buscar cualquier instancia de i18n en el objeto window
-                for (let key in window) {
-                    try {
-                        const obj = window[key];
-                        if (obj && typeof obj === 'object' && typeof obj.changeLanguage === 'function' && obj.t) {
-                            console.log(`✅ Encontrado i18n en: ${key}`);
-                            obj.changeLanguage(newLang).then(() => {
-                                updateUIAndReload(newLang);
-                            });
-                            return true;
-                        }
-                    } catch (e) {
-                        // Continuar
-                    }
-                }
-
-                console.log('❌ No se pudo acceder al sistema del bundle');
-                return false;
+                // Estrategia 3: Sistema manual
+                console.log('🔧 Usando sistema manual');
+                strategy2_changeLanguage(newLang);
             }
 
-            // Sistema manual de respaldo
-            function activateManualLanguageSystem(newLang) {
-                console.log('🔧 Activando sistema manual para:', newLang);
+            // 5. ESTRATEGIA 2 - SISTEMA MANUAL ROBUSTO
+            function strategy2_changeLanguage(newLang) {
+                console.log('🔧 Activando sistema manual robusto');
 
-                // 1. Guardar preferencia
+                // Paso 1: Guardar preferencia de forma persistente
                 localStorage.setItem('preferredLanguage', newLang);
-                localStorage.setItem('languageChanged', 'true');
+                localStorage.setItem('languageTimestamp', Date.now().toString());
 
-                // 2. Actualizar todos los textos inmediatamente
-                updateAllContentManually(newLang);
+                // Paso 2: Actualizar todos los textos inmediatamente
+                updateAllContent(newLang);
 
-                // 3. Actualizar botones
-                updateAllLanguageButtons(newLang);
+                // Paso 3: Actualizar botones
+                updateButtonTexts(newLang);
 
-                // 4. Mostrar confirmación
-                showLanguageFeedback(newLang);
-
-                // 5. Recargar para cambios persistentes
+                // Paso 4: Forzar recarga con parámetro para evitar cache
                 setTimeout(() => {
-                    console.log('🔄 Recargando página...');
-                    window.location.reload();
+                    console.log('🔄 Recargando con nuevo idioma...');
+                    // Usar parámetro cache busting
+                    window.location.href = window.location.pathname + '?lang=' + newLang + '&t=' + Date.now();
                 }, 800);
             }
 
-            // Actualizar contenido manualmente (fallback)
-            function updateAllContentManually(lang) {
-                console.log('📝 Actualizando contenido manualmente a:', lang);
+            // 6. ACTUALIZAR CONTENIDO MANUALMENTE
+            function updateAllContent(lang) {
+                console.log('📝 Actualizando contenido a:', lang);
 
-                // Textos en español (por defecto)
-                const esTexts = {
-                    home: "Inicio",
-                    about: "Sobre Mí",
-                    projects: "Proyectos",
-                    certifications: "Certificaciones",
-                    contact: "Contacto",
-                    hero: "Soy un desarrollador especializado y certificado en Salesforce con experiencia en integración de inteligencia artificial, automatización de procesos y gestión de proyectos CRM de alto impacto.",
-                    rights: "© 2024 Santiago Carrillo. Todos los derechos reservados.",
-                    language: "Idioma"
+                const translations = {
+                    es: {
+                        home: "Inicio",
+                        about: "Sobre Mí",
+                        projects: "Proyectos",
+                        certifications: "Certificaciones",
+                        contact: "Contacto",
+                        hero: "Soy un desarrollador especializado y certificado en Salesforce con experiencia en integración de inteligencia artificial, automatización de procesos y gestión de proyectos CRM de alto impacto.",
+                        rights: "© 2024 Santiago Carrillo. Todos los derechos reservados.",
+                        viewProjects: "Ver Proyectos",
+                        linkedin: "LinkedIn"
+                    },
+                    en: {
+                        home: "Home",
+                        about: "About Me",
+                        projects: "Projects",
+                        certifications: "Certifications",
+                        contact: "Contact",
+                        hero: "I am a specialized and certified Salesforce developer with experience in artificial intelligence integration, process automation, and high-impact CRM project management.",
+                        rights: "© 2024 Santiago Carrillo. All rights reserved.",
+                        viewProjects: "View Projects",
+                        linkedin: "LinkedIn"
+                    }
                 };
 
-                // Textos en inglés
-                const enTexts = {
-                    home: "Home",
-                    about: "About Me",
-                    projects: "Projects",
-                    certifications: "Certifications",
-                    contact: "Contact",
-                    hero: "I am a specialized and certified Salesforce developer with experience in artificial intelligence integration, process automation, and high-impact CRM project management.",
-                    rights: "© 2024 Santiago Carrillo. All rights reserved.",
-                    language: "Language"
-                };
-
-                const texts = lang === 'en' ? enTexts : esTexts;
+                const texts = translations[lang];
 
                 // Actualizar navegación
-                document.querySelectorAll('button.text-white.hover\\:text-blue-400').forEach((btn, index) => {
-                    const spans = btn.querySelectorAll('span');
-                    if (spans[0]) {
-                        const textKeys = ['home', 'about', 'projects', 'certifications', 'contact'];
-                        if (textKeys[index]) {
-                            spans[0].textContent = texts[textKeys[index]];
+                const navButtons = document.querySelectorAll('header button.text-white');
+                navButtons.forEach((btn, idx) => {
+                    const span = btn.querySelector('span.relative.z-10');
+                    if (span) {
+                        const keys = ['home', 'about', 'projects', 'certifications', 'contact'];
+                        if (keys[idx]) {
+                            span.textContent = texts[keys[idx]];
                         }
                     }
                 });
 
-                // Actualizar hero text
+                // Actualizar texto hero
                 const heroText = document.querySelector('p.text-lg.md\\:text-xl.text-gray-300');
                 if (heroText) {
                     heroText.textContent = texts.hero;
                 }
 
+                // Actualizar botones de hero
+                const projectBtn = document.querySelector('button.bg-blue-600');
+                if (projectBtn) {
+                    const icon = projectBtn.querySelector('i.ri-eye-line');
+                    if (icon) {
+                        projectBtn.innerHTML = '';
+                        projectBtn.appendChild(icon);
+                        projectBtn.appendChild(document.createTextNode(' ' + texts.viewProjects));
+                    }
+                }
+
                 // Actualizar footer
-                const footerText = document.querySelector('footer p.text-gray-400');
-                if (footerText) {
-                    footerText.textContent = texts.rights;
+                const footerRight = document.querySelector('footer p.text-gray-400');
+                if (footerRight) {
+                    footerRight.textContent = texts.rights;
                 }
 
                 console.log('✅ Contenido actualizado manualmente');
             }
 
-            // Actualizar botones de idioma
-            function updateAllLanguageButtons(lang) {
+            // 7. ACTUALIZAR TEXTO DE BOTONES
+            function updateButtonTexts(lang) {
                 const buttons = document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20');
                 buttons.forEach(button => {
                     const span = button.querySelector('span');
@@ -434,64 +433,103 @@
                 });
             }
 
-            // Mostrar feedback
-            function showLanguageFeedback(lang) {
+            // 8. FINALIZAR CAMBIO DE IDIOMA
+            function finalizeLanguageChange(newLang) {
+                console.log('✅ Finalizando cambio de idioma:', newLang);
+
+                // Guardar preferencia
+                localStorage.setItem('preferredLanguage', newLang);
+
+                // Actualizar UI
+                updateButtonTexts(newLang);
+
+                // Mostrar feedback
+                showFeedback(newLang);
+
+                // Recargar para aplicar todos los cambios
+                setTimeout(() => {
+                    window.location.reload();
+                }, 600);
+            }
+
+            // 9. FEEDBACK VISUAL
+            function showFeedback(lang) {
+                const existing = document.querySelector('.language-feedback');
+                if (existing) existing.remove();
+
                 const feedback = document.createElement('div');
-                feedback.innerHTML = `
-            <div style="position:fixed; top:20px; right:20px; background:linear-gradient(135deg, #667eea, #764ba2); color:white; padding:12px 20px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.3); z-index:10000; font-weight:600;">
-                🌍 ${lang === 'en' ? 'Language changed to English' : 'Idioma cambiado a Español'}
-            </div>
+                feedback.className = 'language-feedback';
+                feedback.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 10000;
+            font-weight: 600;
+            animation: slideIn 0.3s ease-out;
         `;
+                feedback.textContent = `✅ ${lang === 'en' ? 'Language changed to English' : 'Idioma cambiado a Español'}`;
                 document.body.appendChild(feedback);
-                setTimeout(() => feedback.remove(), 3000);
+
+                setTimeout(() => {
+                    feedback.style.animation = 'slideOut 0.3s ease-in';
+                    setTimeout(() => feedback.remove(), 300);
+                }, 2000);
             }
 
-            // Actualizar UI y recargar
-            function updateUIAndReload(lang) {
-                updateAllLanguageButtons(lang);
-                showLanguageFeedback(lang);
-                setTimeout(() => window.location.reload(), 500);
+            // 10. INYECTAR ESTILOS DE ANIMACIÓN
+            if (!document.querySelector('#language-styles')) {
+                const styles = document.createElement('style');
+                styles.id = 'language-styles';
+                styles.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100px); opacity: 0; }
+            }
+        `;
+                document.head.appendChild(styles);
             }
 
-            // Aplicar idioma guardado al cargar
-            function applySavedLanguage() {
-                const savedLang = localStorage.getItem('preferredLanguage');
-                if (savedLang && savedLang !== 'es') {
-                    console.log('💾 Aplicando idioma guardado:', savedLang);
-                    updateAllLanguageButtons(savedLang);
-                }
+            // INICIALIZAR SISTEMA
+            setupLanguageButtons();
+
+            // VERIFICAR IDIOMA EN URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlLang = urlParams.get('lang');
+            if (urlLang && ['es', 'en'].includes(urlLang)) {
+                console.log('🌐 Idioma detectado en URL:', urlLang);
+                localStorage.setItem('preferredLanguage', urlLang);
             }
 
-            // INICIALIZAR TODO EL SISTEMA
-            hookIntoI18n();
-            setupDOMBasedLanguageSystem();
-            applySavedLanguage();
-
-            // Debug final
+            // DEBUG FINAL
             setTimeout(() => {
-                console.log('=== SISTEMA DE IDIOMAS LISTO ===');
-                console.log('We disponible:', !!window.We);
-                console.log('_i18nInstance:', !!window._i18nInstance);
+                console.log('=== SISTEMA LISTO ===');
                 console.log('Idioma guardado:', localStorage.getItem('preferredLanguage'));
-                console.log('Botones configurados:', document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20').length);
-            }, 2000);
+                console.log('Bundle interceptado:', !!bundleI18nInstance);
+                console.log('We disponible:', !!window.We);
+            }, 1000);
         });
 
-        // Comandos de debug para consola
-        window.forceLanguageChange = function (lang) {
+        // COMANDOS DE EMERGENCIA
+        window.forceLanguage = function (lang) {
             localStorage.setItem('preferredLanguage', lang);
-            localStorage.setItem('languageChanged', 'true');
-            location.reload();
+            localStorage.setItem('forceLanguage', 'true');
+            window.location.href = window.location.pathname + '?lang=' + lang + '&force=true&t=' + Date.now();
         };
 
-        window.checkI18n = function () {
-            console.log('=== CHECK I18N ===');
+        window.debugLanguage = function () {
+            console.log('=== DEBUG ===');
+            console.log('preferredLanguage:', localStorage.getItem('preferredLanguage'));
             console.log('We:', window.We);
-            console.log('_i18nInstance:', window._i18nInstance);
-            console.log('localStorage:', {
-                preferredLanguage: localStorage.getItem('preferredLanguage'),
-                languageChanged: localStorage.getItem('languageChanged')
-            });
+            console.log('URL params:', new URLSearchParams(window.location.search).toString());
         };
     </script>
 </body>
