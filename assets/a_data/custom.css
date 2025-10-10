@@ -1,84 +1,65 @@
-/* ===== SOLUCIÓN NOMBRE CORTADO ===== */
-.hero-content h1,
-.hero-name,
-.hero-title {
-    margin-bottom: 15px !important;
-    padding-top: 5px !important;
-    line-height: 1.2 !important;
+/* ===== SOLUCIÓN NOMBRE CORTADO - MÁS ESPECÍFICO ===== */
+section.min-h-screen.relative.overflow-hidden .text-5xl.md\\:text-7xl.font-bold.mb-4 {
+    margin-bottom: 25px !important;
+    padding-top: 10px !important;
+    line-height: 1.1 !important;
+    transform: translateY(-8px) !important;
 }
 
-/* Asegurar que la "G" de Santiago sea visible */
-h1.text-4xl,
-h1.text-5xl,
-h1.text-6xl {
-    transform: translateY(-3px);
+/* ===== FORMULARIO - MÁS ESPECÍFICO ===== */
+main section .contact-form input,
+main section .contact-form textarea,
+main section input[type="text"],
+main section input[type="email"],
+main section textarea {
+    color: #1f2937 !important;
+    background-color: #ffffff !important;
+    border: 2px solid #d1d5db !important;
+    padding: 14px 16px !important;
+    border-radius: 8px !important;
+    width: 100% !important;
+    font-size: 16px !important;
 }
 
-/* ===== SOLUCIÓN FORMULARIO TEXTO INVISIBLE ===== */
-.contact-form input,
-.contact-form textarea,
-.form-input,
-.form-textarea,
-input[type="text"],
-input[type="email"],
-textarea {
-    color: #2d3748 !important;
-    background-color: white !important;
-    border: 1px solid #e2e8f0 !important;
-    padding: 12px 16px !important;
-}
-
-/* Placeholders visibles */
-.contact-form input::placeholder,
-.contact-form textarea::placeholder,
-.form-input::placeholder,
-.form-textarea::placeholder,
-input[type="text"]::placeholder,
-input[type="email"]::placeholder,
-textarea::placeholder {
-    color: #718096 !important;
-    opacity: 1 !important;
-}
-
-/* Texto visible al escribir */
-.contact-form input:focus,
-.contact-form textarea:focus,
-.form-input:focus,
-.form-textarea:focus,
-input[type="text"]:focus,
-input[type="email"]:focus,
-textarea:focus {
-    color: #2d3748 !important;
-    background-color: white !important;
-    border-color: #4299e1 !important;
+main section .contact-form input:focus,
+main section .contact-form textarea:focus,
+main section input[type="text"]:focus,
+main section input[type="email"]:focus,
+main section textarea:focus {
+    color: #1f2937 !important;
+    background-color: #ffffff !important;
+    border-color: #3b82f6 !important;
     outline: none !important;
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1) !important;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15) !important;
+    transform: scale(1.02) !important;
 }
 
-/* ===== ESTILOS ADICIONALES PARA MEJOR VISUAL ===== */
-.contact-form label {
-    color: #2d3748 !important;
-    font-weight: 600 !important;
-    margin-bottom: 8px !important;
-    display: block !important;
+/* Placeholders más específicos */
+main section .contact-form input::placeholder,
+main section .contact-form textarea::placeholder {
+    color: #6b7280 !important;
+    opacity: 1 !important;
+    font-weight: 500 !important;
 }
 
-/* Botón del formulario */
-.contact-form button,
-.form-submit,
-button[type="submit"] {
-    background-color: #4299e1 !important;
+/* ===== BOTONES MÁS ESPECÍFICOS ===== */
+main section .contact-form button,
+main section button[type="submit"] {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
     color: white !important;
-    padding: 12px 24px !important;
+    padding: 14px 32px !important;
     border: none !important;
-    border-radius: 6px !important;
-    font-weight: 600 !important;
+    border-radius: 10px !important;
+    font-weight: 700 !important;
+    font-size: 16px !important;
     cursor: pointer !important;
-    transition: background-color 0.3s ease !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4) !important;
 }
 
-.contact-form button:hover,
-.form-submit:hover,
-button[type="submit"]:hover {
-    background-color: #3182ce !important;
+main section .contact-form button:hover,
+main section button[type="submit"]:hover {
+    background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5) !important;
 }
