@@ -1,9 +1,11 @@
 /* ===== SOLUCIÓN NOMBRE CORTADO - MÁS ESPECÍFICO ===== */
 section.min-h-screen.relative.overflow-hidden .text-5xl.md\\:text-7xl.font-bold.mb-4 {
-    margin-bottom: 25px !important;
-    padding-top: 10px !important;
+    margin-bottom: 35px !important;
+    padding-top: 25px !important;
     line-height: 1.1 !important;
     transform: translateY(-8px) !important;
+    position: relative !important;
+    top: -10px !important;
 }
 
 /* ===== FORMULARIO - MÁS ESPECÍFICO ===== */
