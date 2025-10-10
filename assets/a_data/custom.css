@@ -66,21 +66,3 @@ main section button[type="submit"]:hover {
     transform: translateY(-3px) !important;
     box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5) !important;
 }
-
-/* Debug visual temporal */
-button.flex.items-center.space-x-2.bg-blue-600\/20 {
-    border: 2px solid #ff0000 !important;
-    position: relative;
-}
-
-button.flex.items-center.space-x-2.bg-blue-600\/20::after {
-    content: "CLICKABLE";
-    position: absolute;
-    top: -20px;
-    left: 0;
-    background: red;
-    color: white;
-    font-size: 10px;
-    padding: 2px 4px;
-    border-radius: 3px;
-}
