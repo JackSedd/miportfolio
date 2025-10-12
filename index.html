@@ -204,9 +204,9 @@
         </div>
     </div>
     <script>
-        // SISTEMA MEJORADO CON SELECTORES ESPECÍFICOS
+        // SISTEMA CORREGIDO - SIN BUCLE INFINITO
         document.addEventListener('DOMContentLoaded', function () {
-            console.log('🚀 Iniciando sistema mejorado de idiomas');
+            console.log('🚀 Iniciando sistema de idiomas');
 
             // 1. TRADUCCIONES COMPLETAS
             const translations = {
@@ -219,7 +219,6 @@
                     contact: "Contact",
 
                     // Hero Section
-                    heroTagline: "✨ Salesforce & AI Developer",
                     heroDescription: "I am a specialized and certified Salesforce developer with experience in artificial intelligence integration, process automation, and high-impact CRM project management.",
                     viewProjects: "View Projects",
 
@@ -239,8 +238,7 @@
                     contactSubtitle: "Have a project in mind? Let's talk!",
 
                     // Footer
-                    rights: "© 2024 Santiago Carrillo. All rights reserved.",
-                    language: "Language"
+                    rights: "© 2024 Santiago Carrillo. All rights reserved."
                 },
                 es: {
                     // Navegación
@@ -251,7 +249,6 @@
                     contact: "Contacto",
 
                     // Hero Section
-                    heroTagline: "✨ Salesforce & AI Developer",
                     heroDescription: "Soy un desarrollador especializado y certificado en Salesforce con experiencia en integración de inteligencia artificial, automatización de procesos y gestión de proyectos CRM de alto impacto.",
                     viewProjects: "Ver Proyectos",
 
@@ -271,130 +268,118 @@
                     contactSubtitle: "¿Tienes un proyecto en mente? ¡Hablemos!",
 
                     // Footer
-                    rights: "© 2024 Santiago Carrillo. Todos los derechos reservados.",
-                    language: "Idioma"
+                    rights: "© 2024 Santiago Carrillo. Todos los derechos reservados."
                 }
             };
 
-            // 2. OBTENER IDIOMA ACTUAL
+            // 2. CONTROL PARA EVITAR BUCLE
+            let isApplyingTranslations = false;
+            let appliedTranslations = false;
+
+            // 3. OBTENER IDIOMA ACTUAL
             function getCurrentLanguage() {
                 return localStorage.getItem('preferredLanguage') || 'es';
             }
 
-            // 3. BUSCAR TEXTO EN TODA LA PÁGINA Y REEMPLAZAR
-            function applyAllTranslations(lang) {
+            // 4. APLICAR TRADUCCIONES UNA SOLA VEZ
+            function applyTranslations(lang) {
+                if (isApplyingTranslations) return;
+
+                isApplyingTranslations = true;
                 console.log('🎨 Aplicando traducciones:', lang);
+
                 const texts = translations[lang];
+                if (!texts) {
+                    isApplyingTranslations = false;
+                    return;
+                }
 
-                if (!texts) return;
+                // NAVEGACIÓN
+                const navButtons = document.querySelectorAll('header button.text-white.hover\\:text-blue-400');
+                const navKeys = ['home', 'about', 'projects', 'certifications', 'contact'];
 
-                // ESTRATEGIA: Buscar y reemplazar textos específicos
-                const textMappings = [
-                    // Hero Section
-                    {
-                        selector: 'p.text-xl.md\\:text-2xl.text-blue-200',
-                        text: '✨ Salesforce & AI Developer',
-                        replacement: texts.heroTagline
-                    },
-                    {
-                        selector: 'p.text-lg.md\\:text-xl.text-gray-300',
-                        text: /Soy un desarrollador especializado|I am a specialized/,
-                        replacement: texts.heroDescription
-                    },
-                    {
-                        selector: 'button.bg-gradient-to-r.from-blue-600',
-                        text: /Ver Proyectos|View Projects/,
-                        replacement: texts.viewProjects
-                    },
-
-                    // About Section  
-                    {
-                        selector: 'h2.text-4xl',
-                        text: /Sobre Mí|About Me/,
-                        replacement: texts.aboutTitle
-                    },
-                    {
-                        selector: 'p.text-gray-300',
-                        text: /Soy un desarrollador especializado en el ecosistema|I am a developer specialized in the Salesforce/,
-                        replacement: texts.aboutDescription
-                    },
-                    {
-                        selector: 'h3.text-2xl',
-                        text: /Habilidades Principales|Core Skills/,
-                        replacement: texts.coreSkills
-                    },
-
-                    // Projects Section
-                    {
-                        selector: 'h2.text-4xl',
-                        text: /Proyectos Destacados|Featured Projects/,
-                        replacement: texts.projectsTitle
-                    },
-
-                    // Certifications Section
-                    {
-                        selector: 'h2.text-4xl',
-                        text: /Certificaciones|Certifications/,
-                        replacement: texts.certificationsTitle
-                    },
-
-                    // Contact Section
-                    {
-                        selector: 'h2.text-4xl',
-                        text: /Contacto|Contact/,
-                        replacement: texts.contactTitle
-                    },
-                    {
-                        selector: 'p.text-xl.text-gray-300',
-                        text: /¿Tienes un proyecto en mente|Have a project in mind/,
-                        replacement: texts.contactSubtitle
-                    },
-
-                    // Footer
-                    {
-                        selector: 'footer p.text-gray-400',
-                        text: /© 2024 Santiago Carrillo\. (Todos los derechos reservados|All rights reserved)\./,
-                        replacement: texts.rights
-                    }
-                ];
-
-                // Aplicar todos los reemplazos
-                textMappings.forEach(mapping => {
-                    const elements = document.querySelectorAll(mapping.selector);
-                    elements.forEach(element => {
-                        if (mapping.text instanceof RegExp) {
-                            // Búsqueda por expresión regular
-                            if (mapping.text.test(element.textContent)) {
-                                element.textContent = mapping.replacement;
-                                console.log('✅ Reemplazado:', mapping.replacement);
-                            }
-                        } else {
-                            // Búsqueda por texto exacto
-                            if (element.textContent.includes(mapping.text)) {
-                                element.textContent = mapping.replacement;
-                                console.log('✅ Reemplazado:', mapping.replacement);
-                            }
+                navButtons.forEach((button, index) => {
+                    if (navKeys[index]) {
+                        const span = button.querySelector('span.relative.z-10');
+                        if (span) {
+                            span.textContent = texts[navKeys[index]];
                         }
-                    });
-                });
-
-                // NAVEGACIÓN ESPECÍFICA
-                const navSelectors = [
-                    'header button:first-child span', // Home
-                    'header button:nth-child(2) span', // About  
-                    'header button:nth-child(3) span', // Projects
-                    'header button:nth-child(4) span', // Certifications
-                    'header button:nth-child(5) span'  // Contact
-                ];
-
-                const navTexts = ['home', 'about', 'projects', 'certifications', 'contact'];
-
-                navSelectors.forEach((selector, index) => {
-                    const element = document.querySelector(selector);
-                    if (element && navTexts[index]) {
-                        element.textContent = texts[navTexts[index]];
                     }
                 });
+
+                // HERO SECTION
+                const heroText = document.querySelector('p.text-lg.md\\:text-xl.text-gray-300');
+                if (heroText && !heroText.hasAttribute('data-translated')) {
+                    heroText.textContent = texts.heroDescription;
+                    heroText.setAttribute('data-translated', 'true');
+                }
+
+                const projectBtn = document.querySelector('button.bg-gradient-to-r.from-blue-600.to-blue-700');
+                if (projectBtn && !projectBtn.hasAttribute('data-translated')) {
+                    const icon = projectBtn.querySelector('i.ri-eye-line');
+                    if (icon) {
+                        projectBtn.innerHTML = '';
+                        projectBtn.appendChild(icon.cloneNode(true));
+                        projectBtn.appendChild(document.createTextNode(' ' + texts.viewProjects));
+                        projectBtn.setAttribute('data-translated', 'true');
+                    }
+                }
+
+                // BUSCAR TODAS LAS SECCIONES
+                const sections = document.querySelectorAll('section');
+
+                sections.forEach(section => {
+                    // ABOUT SECTION (primera sección después del hero)
+                    if (section.querySelector('h2.text-4xl') && !section.hasAttribute('data-checked')) {
+                        const h2 = section.querySelector('h2.text-4xl');
+                        const h3 = section.querySelector('h3.text-2xl');
+                        const p = section.querySelector('p.text-gray-300');
+
+                        if (h2 && (h2.textContent.includes('Sobre Mí') || h2.textContent.includes('About Me'))) {
+                            h2.textContent = texts.aboutTitle;
+                            if (p) p.textContent = texts.aboutDescription;
+                            if (h3) h3.textContent = texts.coreSkills;
+                            section.setAttribute('data-checked', 'true');
+                        }
+                    }
+
+                    // PROJECTS SECTION
+                    if (section.querySelector('h2.text-4xl') && !section.hasAttribute('data-checked-projects')) {
+                        const h2 = section.querySelector('h2.text-4xl');
+                        if (h2 && (h2.textContent.includes('Proyectos Destacados') || h2.textContent.includes('Featured Projects'))) {
+                            h2.textContent = texts.projectsTitle;
+                            section.setAttribute('data-checked-projects', 'true');
+                        }
+                    }
+
+                    // CERTIFICATIONS SECTION
+                    if (section.querySelector('h2.text-4xl') && !section.hasAttribute('data-checked-certs')) {
+                        const h2 = section.querySelector('h2.text-4xl');
+                        if (h2 && (h2.textContent.includes('Certificaciones') || h2.textContent.includes('Certifications'))) {
+                            h2.textContent = texts.certificationsTitle;
+                            section.setAttribute('data-checked-certs', 'true');
+                        }
+                    }
+
+                    // CONTACT SECTION
+                    if (section.querySelector('h2.text-4xl') && !section.hasAttribute('data-checked-contact')) {
+                        const h2 = section.querySelector('h2.text-4xl');
+                        const subtitle = section.querySelector('p.text-xl.text-gray-300');
+
+                        if (h2 && (h2.textContent.includes('Contacto') || h2.textContent.includes('Contact'))) {
+                            h2.textContent = texts.contactTitle;
+                            if (subtitle) subtitle.textContent = texts.contactSubtitle;
+                            section.setAttribute('data-checked-contact', 'true');
+                        }
+                    }
+                });
+
+                // FOOTER
+                const footerText = document.querySelector('footer p.text-gray-400');
+                if (footerText && !footerText.hasAttribute('data-translated')) {
+                    footerText.textContent = texts.rights;
+                    footerText.setAttribute('data-translated', 'true');
+                }
 
                 // BOTONES DE IDIOMA
                 document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20').forEach(btn => {
@@ -406,14 +391,14 @@
                     }
                 });
 
-                console.log('✅ Todas las traducciones aplicadas');
+                appliedTranslations = true;
+                isApplyingTranslations = false;
+                console.log('✅ Traducciones aplicadas');
             }
 
-            // 4. CONFIGURAR BOTONES DE IDIOMA
+            // 5. CONFIGURAR BOTONES DE IDIOMA
             function setupLanguageButtons() {
-                const buttons = document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20');
-
-                buttons.forEach(btn => {
+                document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20').forEach(btn => {
                     const newBtn = btn.cloneNode(true);
                     btn.parentNode.replaceChild(newBtn, btn);
 
@@ -427,15 +412,20 @@
                         console.log('🌐 Cambiando idioma a:', newLang);
 
                         localStorage.setItem('preferredLanguage', newLang);
-                        applyAllTranslations(newLang);
+                        appliedTranslations = false; // Reset flag
+                        applyTranslations(newLang);
                         showFeedback(newLang);
                     });
                 });
             }
 
-            // 5. FEEDBACK VISUAL
+            // 6. FEEDBACK VISUAL
             function showFeedback(lang) {
+                const existing = document.querySelector('.lang-feedback');
+                if (existing) existing.remove();
+
                 const feedback = document.createElement('div');
+                feedback.className = 'lang-feedback';
                 feedback.style.cssText = `
             position: fixed;
             top: 20px;
@@ -455,51 +445,34 @@
                 setTimeout(() => feedback.remove(), 2000);
             }
 
-            // 6. OBSERVER PARA DETECTAR CAMBIOS DINÁMICOS
-            function setupMutationObserver() {
-                const observer = new MutationObserver(function (mutations) {
-                    mutations.forEach(function (mutation) {
-                        if (mutation.type === 'childList') {
-                            // Re-aplicar traducciones si se añaden nuevos nodos
-                            const currentLang = getCurrentLanguage();
-                            setTimeout(() => applyAllTranslations(currentLang), 100);
-                        }
-                    });
-                });
+            // 7. INICIALIZAR UNA SOLA VEZ
+            function initialize() {
+                const currentLang = getCurrentLanguage();
+                console.log('💾 Idioma:', currentLang);
 
-                observer.observe(document.body, {
-                    childList: true,
-                    subtree: true
-                });
+                // Aplicar traducciones después de un delay para asegurar DOM
+                setTimeout(() => {
+                    if (!appliedTranslations) {
+                        applyTranslations(currentLang);
+                    }
+                }, 100);
+
+                // Configurar botones después de otro delay
+                setTimeout(() => {
+                    setupLanguageButtons();
+                }, 200);
+
+                console.log('✅ Sistema listo');
             }
 
-            // INICIALIZAR
-            const currentLang = getCurrentLanguage();
-            console.log('💾 Idioma inicial:', currentLang);
-
-            // Aplicar traducciones después de un pequeño delay para asegurar que el DOM esté listo
-            setTimeout(() => {
-                applyAllTranslations(currentLang);
-                setupLanguageButtons();
-                setupMutationObserver();
-            }, 500);
-
-            console.log('✅ Sistema de idiomas inicializado');
+            // INICIAR
+            initialize();
         });
 
         // Comandos de consola
-        window.forceLanguage = function (lang) {
+        window.forceLang = function (lang) {
             localStorage.setItem('preferredLanguage', lang);
             location.reload();
-        };
-
-        window.showCurrentTexts = function () {
-            console.log('=== TEXTOS ACTUALES ===');
-            console.log('Hero tagline:', document.querySelector('p.text-xl.md\\:text-2xl.text-blue-200')?.textContent);
-            console.log('Hero description:', document.querySelector('p.text-lg.md\\:text-xl.text-gray-300')?.textContent);
-            console.log('About title:', document.querySelector('h2.text-4xl')?.textContent);
-            console.log('About description:', document.querySelector('p.text-gray-300')?.textContent);
-            console.log('Projects title:', document.querySelectorAll('h2.text-4xl')[1]?.textContent);
         };
     </script>
 </body>
