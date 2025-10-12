@@ -204,35 +204,56 @@
         </div>
     </div>
     <script>
-        // SISTEMA MÍNIMO - SOLO PARA LOS BOTONES
-        document.addEventListener('click', function (e) {
-            const button = e.target.closest('button.flex.items-center.space-x-2.bg-blue-600\\/20');
+        // SISTEMA CORREGIDO - CON DEBUG COMPLETO
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('=== SISTEMA DE IDIOMAS INICIADO ===');
 
-            if (button) {
-                e.preventDefault();
-                e.stopPropagation();
+            // Configurar botones
+            document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20').forEach(btn => {
+                btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
 
-                const currentLang = localStorage.getItem('preferredLanguage') || 'es';
-                const newLang = currentLang === 'es' ? 'en' : 'es';
+                    const currentLang = localStorage.getItem('preferredLanguage') || 'es';
+                    const newLang = currentLang === 'es' ? 'en' : 'es';
 
-                console.log('🌐 Cambiando idioma a:', newLang);
+                    console.log('🔄 CAMBIO DE IDIOMA SOLICITADO:');
+                    console.log(' - De:', currentLang);
+                    console.log(' - A:', newLang);
+                    console.log(' - We disponible:', !!window.We);
+                    console.log(' - We language:', window.We?.language);
 
-                // Solo cambiar y recargar - el bundle ya maneja el resto
-                localStorage.setItem('preferredLanguage', newLang);
-                location.reload();
-            }
+                    // Guardar preferencia
+                    localStorage.setItem('preferredLanguage', newLang);
+                    localStorage.setItem('languageChangeTime', Date.now().toString());
+
+                    console.log('💾 Preferencia guardada en localStorage');
+
+                    // Recargar inmediatamente
+                    setTimeout(() => {
+                        console.log('🔄 Recargando página...');
+                        window.location.reload();
+                    }, 100);
+                });
+            });
+
+            // Debug del estado actual
+            setTimeout(() => {
+                console.log('=== ESTADO ACTUAL ===');
+                console.log('localStorage preferredLanguage:', localStorage.getItem('preferredLanguage'));
+                console.log('We instance:', window.We);
+                console.log('We language:', window.We?.language);
+                console.log('We initialized:', window.We?.isInitialized);
+            }, 2000);
         });
 
-        // Actualizar texto de botones al cargar
-        const savedLang = localStorage.getItem('preferredLanguage') || 'es';
-        document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20').forEach(btn => {
-            const span = btn.querySelector('span');
-            if (span) {
-                span.textContent = span.textContent.includes('footer.language')
-                    ? `footer.language: ${savedLang.toUpperCase()}`
-                    : savedLang.toUpperCase();
-            }
-        });
+        // Comando de emergencia para consola
+        window.forceEnglish = function () {
+            console.log('🚨 FORZANDO INGLÉS MANUALMENTE');
+            localStorage.setItem('preferredLanguage', 'en');
+            localStorage.setItem('forceEnglish', 'true');
+            window.location.href = window.location.pathname + '?forceLang=en&t=' + Date.now();
+        };
     </script>
 </body>
 
