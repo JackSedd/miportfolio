@@ -15,6 +15,9 @@
     <script type="module" crossorigin="" src="assets/a_data/index-sCRMAM3B.js"></script>
     <link rel="stylesheet" crossorigin="" href="assets/a_data/index-BKZeRxvL.css">
     <link rel="stylesheet" href="assets/a_data/custom.css">
+    <!--           ConveyThis Script Start         -->
+    <script src="//cdn.conveythis.com/javascript/conveythis.js?api_key=pub_380230fa089a51c5b123cd85a9ecdde0"></script>
+    <!--           ConveyThis Script End         -->
 </head>
 
 <body>
@@ -203,106 +206,6 @@
                 </footer>
         </div>
     </div>
-    <script>
-        // CONEXIÓN AL SISTEMA i18n DEL BUNDLE
-        document.addEventListener('DOMContentLoaded', function () {
-            console.log('🔗 Conectando con el sistema i18n del bundle...');
-
-            // Función para obtener la instancia de i18n
-            function getI18nInstance() {
-                // Estrategia 1: Buscar la instancia global 'We' (i18n)
-                if (window.We && typeof window.We.changeLanguage === 'function') {
-                    console.log('✅ i18n encontrado como: window.We');
-                    return window.We;
-                }
-
-                // Estrategia 2: Buscar en el contexto de React
-                const root = document.getElementById('root');
-                if (root && root.__reactInternalInstance$) {
-                    try {
-                        let fiberNode = root.__reactInternalInstance$;
-                        while (fiberNode) {
-                            if (fiberNode.memoizedProps && fiberNode.memoizedProps.i18n) {
-                                console.log('✅ i18n encontrado en React props');
-                                return fiberNode.memoizedProps.i18n;
-                            }
-                            fiberNode = fiberNode.child;
-                        }
-                    } catch (e) {
-                        console.warn('No se pudo acceder al contexto de React:', e);
-                    }
-                }
-
-                console.error('❌ No se pudo encontrar la instancia de i18n');
-                return null;
-            }
-
-            // Configurar botones de idioma
-            function setupLanguageButtons() {
-                const buttons = document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20');
-
-                buttons.forEach(btn => {
-                    const newBtn = btn.cloneNode(true);
-                    btn.parentNode.replaceChild(newBtn, btn);
-
-                    newBtn.addEventListener('click', async function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        const i18n = getI18nInstance();
-                        if (!i18n) {
-                            console.error('No se puede cambiar el idioma: i18n no disponible');
-                            return;
-                        }
-
-                        const currentLang = i18n.language || 'es';
-                        const newLang = currentLang === 'es' ? 'en' : 'es';
-
-                        console.log(`🔄 Cambiando idioma via i18n: ${currentLang} -> ${newLang}`);
-
-                        try {
-                            // Usar el método nativo de i18n
-                            await i18n.changeLanguage(newLang);
-                            console.log('✅ Idioma cambiado exitosamente. Recargando...');
-
-                            // Recargar para aplicar todos los cambios
-                            setTimeout(() => location.reload(), 100);
-
-                        } catch (error) {
-                            console.error('Error al cambiar idioma:', error);
-                        }
-                    });
-                });
-            }
-
-            // Inicializar
-            setTimeout(() => {
-                setupLanguageButtons();
-
-                // Verificar estado actual
-                const i18n = getI18nInstance();
-                if (i18n) {
-                    console.log('🌐 Estado i18n:', {
-                        lenguaje: i18n.language,
-                        inicializado: i18n.isInitialized,
-                        idiomas: i18n.languages
-                    });
-                }
-            }, 1000);
-        });
-
-        // Comando de emergencia para consola
-        window.debugI18n = function () {
-            console.log('=== DEBUG i18n ===');
-            console.log('We (i18n):', window.We);
-            if (window.We) {
-                console.log('Lenguaje:', window.We.language);
-                console.log('Inicializado:', window.We.isInitialized);
-                console.log('Idiomas:', window.We.languages);
-                console.log('Recursos:', window.We.options?.resources);
-            }
-        };
-    </script>
 </body>
 
 </html>
