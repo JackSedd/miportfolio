@@ -204,11 +204,11 @@
         </div>
     </div>
     <script>
-        // SISTEMA MANUAL DE TRADUCCIONES - SIN DEPENDER DE i18n
+        // SISTEMA COMPLETO DE TRADUCCIONES PARA TODO EL PORTFOLIO
         document.addEventListener('DOMContentLoaded', function () {
-            console.log('🚀 Iniciando sistema manual de idiomas');
+            console.log('🚀 Iniciando sistema completo de idiomas');
 
-            // 1. TRADUCCIONES COMPLETAS
+            // 1. TRADUCCIONES COMPLETAS DE TODO EL SITIO
             const translations = {
                 en: {
                     // Navegación
@@ -218,12 +218,38 @@
                     certifications: "Certifications",
                     contact: "Contact",
 
-                    // Hero
-                    hero: "I am a specialized and certified Salesforce developer with experience in artificial intelligence integration, process automation, and high-impact CRM project management.",
+                    // Hero Section
+                    heroName: "Santiago Carrillo",
+                    heroTagline: "Salesforce Developer Administrator & AI Developer",
+                    heroDescription: "I am a specialized and certified Salesforce developer with experience in artificial intelligence integration, process automation, and high-impact CRM project management.",
                     viewProjects: "View Projects",
                     linkedin: "LinkedIn",
 
-                    // Footer  
+                    // About Section
+                    aboutTitle: "About Me",
+                    aboutDescription: "I am a developer specialized in the Salesforce ecosystem with extensive experience in platform administration, custom solution development, and artificial intelligence technologies. My focus is on creating efficient solutions that drive business growth.",
+                    coreSkills: "Core Skills",
+
+                    // Projects Section
+                    projectsTitle: "Featured Projects",
+
+                    // Certifications Section  
+                    certificationsTitle: "Certifications",
+
+                    // Contact Section
+                    contactTitle: "Contact",
+                    contactSubtitle: "Have a project in mind? Let's talk!",
+                    contactForm: {
+                        name: "Name",
+                        email: "Email",
+                        message: "Message",
+                        send: "Send Message",
+                        namePlaceholder: "Your full name",
+                        emailPlaceholder: "your@email.com",
+                        messagePlaceholder: "Tell me about your project..."
+                    },
+
+                    // Footer
                     rights: "© 2024 Santiago Carrillo. All rights reserved.",
                     language: "Language"
                 },
@@ -235,10 +261,36 @@
                     certifications: "Certificaciones",
                     contact: "Contacto",
 
-                    // Hero
-                    hero: "Soy un desarrollador especializado y certificado en Salesforce con experiencia en integración de inteligencia artificial, automatización de procesos y gestión de proyectos CRM de alto impacto.",
+                    // Hero Section
+                    heroName: "Santiago Carrillo",
+                    heroTagline: "Salesforce Developer Administrator & AI Developer",
+                    heroDescription: "Soy un desarrollador especializado y certificado en Salesforce con experiencia en integración de inteligencia artificial, automatización de procesos y gestión de proyectos CRM de alto impacto.",
                     viewProjects: "Ver Proyectos",
                     linkedin: "LinkedIn",
+
+                    // About Section
+                    aboutTitle: "Sobre Mí",
+                    aboutDescription: "Soy un desarrollador especializado en el ecosistema Salesforce con amplia experiencia en administración de plataformas, desarrollo de soluciones personalizadas y tecnologías de inteligencia artificial. Mi enfoque se centra en crear soluciones eficientes que impulsen el crecimiento empresarial.",
+                    coreSkills: "Habilidades Principales",
+
+                    // Projects Section
+                    projectsTitle: "Proyectos Destacados",
+
+                    // Certifications Section
+                    certificationsTitle: "Certificaciones",
+
+                    // Contact Section
+                    contactTitle: "Contacto",
+                    contactSubtitle: "¿Tienes un proyecto en mente? ¡Hablemos!",
+                    contactForm: {
+                        name: "Nombre",
+                        email: "Email",
+                        message: "Mensaje",
+                        send: "Enviar Mensaje",
+                        namePlaceholder: "Tu nombre completo",
+                        emailPlaceholder: "tu@email.com",
+                        messagePlaceholder: "Cuéntame sobre tu proyecto..."
+                    },
 
                     // Footer
                     rights: "© 2024 Santiago Carrillo. Todos los derechos reservados.",
@@ -251,9 +303,9 @@
                 return localStorage.getItem('preferredLanguage') || 'es';
             }
 
-            // 3. APLICAR TRADUCCIONES
-            function applyTranslations(lang) {
-                console.log('🎨 Aplicando traducciones:', lang);
+            // 3. APLICAR TRADUCCIONES COMPLETAS
+            function applyAllTranslations(lang) {
+                console.log('🎨 Aplicando todas las traducciones:', lang);
                 const texts = translations[lang];
 
                 if (!texts) {
@@ -261,11 +313,10 @@
                     return;
                 }
 
-                // NAVEGACIÓN - Usando selectores más específicos
+                // ========== NAVEGACIÓN ==========
                 const navButtons = [
                     ...document.querySelectorAll('header button.text-white.hover\\:text-blue-400')
                 ];
-
                 const navKeys = ['home', 'about', 'projects', 'certifications', 'contact'];
                 navButtons.forEach((button, index) => {
                     if (navKeys[index]) {
@@ -276,13 +327,26 @@
                     }
                 });
 
-                // HERO SECTION
-                const heroText = document.querySelector('p.text-lg.md\\:text-xl.text-gray-300');
-                if (heroText) {
-                    heroText.textContent = texts.hero;
+                // ========== HERO SECTION ==========
+                // Nombre (probablemente ya está bien)
+                const heroName = document.querySelector('h1.text-5xl.md\\:text-7xl');
+                if (heroName && heroName.textContent.includes('Santiago Carrillo')) {
+                    // Solo cambiar si es necesario
                 }
 
-                // BOTÓN VIEW PROJECTS
+                // Tagline
+                const heroTagline = document.querySelector('p.text-xl.md\\:text-2xl.text-blue-200');
+                if (heroTagline) {
+                    heroTagline.textContent = texts.heroTagline;
+                }
+
+                // Descripción
+                const heroDescription = document.querySelector('p.text-lg.md\\:text-xl.text-gray-300');
+                if (heroDescription) {
+                    heroDescription.textContent = texts.heroDescription;
+                }
+
+                // Botón View Projects
                 const projectBtn = document.querySelector('button.bg-gradient-to-r.from-blue-600.to-blue-700');
                 if (projectBtn) {
                     const icon = projectBtn.querySelector('i.ri-eye-line');
@@ -293,13 +357,98 @@
                     }
                 }
 
-                // FOOTER
+                // ========== ABOUT SECTION ==========
+                const aboutSection = document.querySelector('section.bg-gray-900');
+                if (aboutSection) {
+                    // Título About
+                    const aboutTitle = aboutSection.querySelector('h2.text-4xl');
+                    if (aboutTitle && aboutTitle.textContent.includes('Sobre Mí') || aboutTitle.textContent.includes('About Me')) {
+                        aboutTitle.textContent = texts.aboutTitle;
+                    }
+
+                    // Descripción About
+                    const aboutDesc = aboutSection.querySelector('p.text-gray-300');
+                    if (aboutDesc && (aboutDesc.textContent.includes('Soy un desarrollador') || aboutDesc.textContent.includes('I am a developer'))) {
+                        aboutDesc.textContent = texts.aboutDescription;
+                    }
+
+                    // Core Skills
+                    const skillsTitle = aboutSection.querySelector('h3.text-2xl');
+                    if (skillsTitle && (skillsTitle.textContent.includes('Habilidades Principales') || skillsTitle.textContent.includes('Core Skills'))) {
+                        skillsTitle.textContent = texts.coreSkills;
+                    }
+                }
+
+                // ========== PROJECTS SECTION ==========
+                const projectsSection = document.querySelector('section.bg-slate-800');
+                if (projectsSection) {
+                    const projectsTitle = projectsSection.querySelector('h2.text-4xl');
+                    if (projectsTitle && (projectsTitle.textContent.includes('Proyectos Destacados') || projectsTitle.textContent.includes('Featured Projects'))) {
+                        projectsTitle.textContent = texts.projectsTitle;
+                    }
+                }
+
+                // ========== CERTIFICATIONS SECTION ==========
+                const certsSection = document.querySelector('section.bg-gray-900');
+                if (certsSection) {
+                    // Buscar la segunda sección bg-gray-900 (certifications)
+                    const allGraySections = document.querySelectorAll('section.bg-gray-900');
+                    if (allGraySections.length > 1) {
+                        const certTitle = allGraySections[1].querySelector('h2.text-4xl');
+                        if (certTitle && (certTitle.textContent.includes('Certificaciones') || certTitle.textContent.includes('Certifications'))) {
+                            certTitle.textContent = texts.certificationsTitle;
+                        }
+                    }
+                }
+
+                // ========== CONTACT SECTION ==========
+                const contactSection = document.querySelector('section.bg-slate-800');
+                if (contactSection) {
+                    // Buscar la segunda sección bg-slate-800 (contact)
+                    const allSlateSections = document.querySelectorAll('section.bg-slate-800');
+                    if (allSlateSections.length > 1) {
+                        const contactTitle = allSlateSections[1].querySelector('h2.text-4xl');
+                        if (contactTitle && (contactTitle.textContent.includes('Contacto') || contactTitle.textContent.includes('Contact'))) {
+                            contactTitle.textContent = texts.contactTitle;
+                        }
+
+                        const contactSubtitle = allSlateSections[1].querySelector('p.text-xl.text-gray-300');
+                        if (contactSubtitle) {
+                            contactSubtitle.textContent = texts.contactSubtitle;
+                        }
+
+                        // Actualizar labels del formulario si existen
+                        const nameLabel = allSlateSections[1].querySelector('label[for="name"]');
+                        if (nameLabel) nameLabel.textContent = texts.contactForm.name;
+
+                        const emailLabel = allSlateSections[1].querySelector('label[for="email"]');
+                        if (emailLabel) emailLabel.textContent = texts.contactForm.email;
+
+                        const messageLabel = allSlateSections[1].querySelector('label[for="message"]');
+                        if (messageLabel) messageLabel.textContent = texts.contactForm.message;
+
+                        const sendBtn = allSlateSections[1].querySelector('button[type="submit"]');
+                        if (sendBtn) sendBtn.textContent = texts.contactForm.send;
+
+                        // Placeholders
+                        const nameInput = allSlateSections[1].querySelector('input[type="text"]');
+                        if (nameInput) nameInput.placeholder = texts.contactForm.namePlaceholder;
+
+                        const emailInput = allSlateSections[1].querySelector('input[type="email"]');
+                        if (emailInput) emailInput.placeholder = texts.contactForm.emailPlaceholder;
+
+                        const messageInput = allSlateSections[1].querySelector('textarea');
+                        if (messageInput) messageInput.placeholder = texts.contactForm.messagePlaceholder;
+                    }
+                }
+
+                // ========== FOOTER ==========
                 const footerText = document.querySelector('footer p.text-gray-400');
                 if (footerText) {
                     footerText.textContent = texts.rights;
                 }
 
-                // BOTONES DE IDIOMA
+                // ========== BOTONES DE IDIOMA ==========
                 document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20').forEach(btn => {
                     const span = btn.querySelector('span');
                     if (span) {
@@ -311,7 +460,7 @@
                     }
                 });
 
-                console.log('✅ Traducciones aplicadas correctamente');
+                console.log('✅ Todas las traducciones aplicadas correctamente');
             }
 
             // 4. CONFIGURAR BOTONES DE IDIOMA
@@ -334,7 +483,7 @@
                         localStorage.setItem('preferredLanguage', newLang);
 
                         // Aplicar nuevas traducciones inmediatamente
-                        applyTranslations(newLang);
+                        applyAllTranslations(newLang);
 
                         // Mostrar feedback
                         showFeedback(newLang);
@@ -362,23 +511,23 @@
             font-weight: 600;
             font-size: 14px;
         `;
-                feedback.textContent = lang === 'en' ? '🌍 Language changed!' : '🌍 ¡Idioma cambiado!';
+                feedback.textContent = lang === 'en' ? '🌍 Language changed to English!' : '🌍 ¡Idioma cambiado a Español!';
                 document.body.appendChild(feedback);
 
                 setTimeout(() => feedback.remove(), 2000);
             }
 
-            // 6. INICIALIZAR
+            // 6. INICIALIZAR SISTEMA
             const currentLang = getCurrentLanguage();
             console.log('💾 Idioma actual:', currentLang);
 
-            // Aplicar traducciones al cargar
-            applyTranslations(currentLang);
+            // Aplicar todas las traducciones al cargar
+            applyAllTranslations(currentLang);
 
             // Configurar botones
             setupLanguageButtons();
 
-            console.log('✅ Sistema manual de idiomas listo');
+            console.log('✅ Sistema completo de idiomas listo');
         });
 
         // Comando para forzar idioma desde consola
@@ -387,6 +536,17 @@
                 localStorage.setItem('preferredLanguage', lang);
                 location.reload();
             }
+        };
+
+        // Comando para debug
+        window.debugTranslations = function () {
+            console.log('=== DEBUG TRANSLATIONS ===');
+            console.log('Idioma guardado:', localStorage.getItem('preferredLanguage'));
+            console.log('Secciones encontradas:');
+            console.log('- Hero:', document.querySelector('section.min-h-screen.relative') ? 'Sí' : 'No');
+            console.log('- About:', document.querySelector('section.bg-gray-900') ? 'Sí' : 'No');
+            console.log('- Projects:', document.querySelector('section.bg-slate-800') ? 'Sí' : 'No');
+            console.log('- Contact:', document.querySelectorAll('section.bg-slate-800').length > 1 ? 'Sí' : 'No');
         };
     </script>
 </body>
