@@ -204,7 +204,7 @@
         </div>
     </div>
     <script>
-        // SISTEMA CORREGIDO - SIN BUCLE INFINITO
+        // SISTEMA COMPLETO - TRADUCCIONES AL CARGAR Y AL CAMBIAR
         document.addEventListener('DOMContentLoaded', function () {
             console.log('🚀 Iniciando sistema de idiomas');
 
@@ -274,14 +274,15 @@
 
             // 2. CONTROL PARA EVITAR BUCLE
             let isApplyingTranslations = false;
-            let appliedTranslations = false;
 
             // 3. OBTENER IDIOMA ACTUAL
             function getCurrentLanguage() {
-                return localStorage.getItem('preferredLanguage') || 'es';
+                const savedLang = localStorage.getItem('preferredLanguage');
+                console.log('💾 Idioma guardado:', savedLang);
+                return savedLang || 'es';
             }
 
-            // 4. APLICAR TRADUCCIONES UNA SOLA VEZ
+            // 4. APLICAR TRADUCCIONES
             function applyTranslations(lang) {
                 if (isApplyingTranslations) return;
 
@@ -299,86 +300,41 @@
                 const navKeys = ['home', 'about', 'projects', 'certifications', 'contact'];
 
                 navButtons.forEach((button, index) => {
-                    if (navKeys[index]) {
+                    if (navKeys[index] && button.querySelector('span.relative.z-10')) {
                         const span = button.querySelector('span.relative.z-10');
-                        if (span) {
-                            span.textContent = texts[navKeys[index]];
-                        }
+                        span.textContent = texts[navKeys[index]];
                     }
                 });
 
                 // HERO SECTION
                 const heroText = document.querySelector('p.text-lg.md\\:text-xl.text-gray-300');
-                if (heroText && !heroText.hasAttribute('data-translated')) {
+                if (heroText) {
                     heroText.textContent = texts.heroDescription;
-                    heroText.setAttribute('data-translated', 'true');
                 }
 
                 const projectBtn = document.querySelector('button.bg-gradient-to-r.from-blue-600.to-blue-700');
-                if (projectBtn && !projectBtn.hasAttribute('data-translated')) {
+                if (projectBtn) {
                     const icon = projectBtn.querySelector('i.ri-eye-line');
                     if (icon) {
                         projectBtn.innerHTML = '';
                         projectBtn.appendChild(icon.cloneNode(true));
                         projectBtn.appendChild(document.createTextNode(' ' + texts.viewProjects));
-                        projectBtn.setAttribute('data-translated', 'true');
                     }
                 }
 
-                // BUSCAR TODAS LAS SECCIONES
-                const sections = document.querySelectorAll('section');
-
-                sections.forEach(section => {
-                    // ABOUT SECTION (primera sección después del hero)
-                    if (section.querySelector('h2.text-4xl') && !section.hasAttribute('data-checked')) {
-                        const h2 = section.querySelector('h2.text-4xl');
-                        const h3 = section.querySelector('h3.text-2xl');
-                        const p = section.querySelector('p.text-gray-300');
-
-                        if (h2 && (h2.textContent.includes('Sobre Mí') || h2.textContent.includes('About Me'))) {
-                            h2.textContent = texts.aboutTitle;
-                            if (p) p.textContent = texts.aboutDescription;
-                            if (h3) h3.textContent = texts.coreSkills;
-                            section.setAttribute('data-checked', 'true');
-                        }
-                    }
-
-                    // PROJECTS SECTION
-                    if (section.querySelector('h2.text-4xl') && !section.hasAttribute('data-checked-projects')) {
-                        const h2 = section.querySelector('h2.text-4xl');
-                        if (h2 && (h2.textContent.includes('Proyectos Destacados') || h2.textContent.includes('Featured Projects'))) {
-                            h2.textContent = texts.projectsTitle;
-                            section.setAttribute('data-checked-projects', 'true');
-                        }
-                    }
-
-                    // CERTIFICATIONS SECTION
-                    if (section.querySelector('h2.text-4xl') && !section.hasAttribute('data-checked-certs')) {
-                        const h2 = section.querySelector('h2.text-4xl');
-                        if (h2 && (h2.textContent.includes('Certificaciones') || h2.textContent.includes('Certifications'))) {
-                            h2.textContent = texts.certificationsTitle;
-                            section.setAttribute('data-checked-certs', 'true');
-                        }
-                    }
-
-                    // CONTACT SECTION
-                    if (section.querySelector('h2.text-4xl') && !section.hasAttribute('data-checked-contact')) {
-                        const h2 = section.querySelector('h2.text-4xl');
-                        const subtitle = section.querySelector('p.text-xl.text-gray-300');
-
-                        if (h2 && (h2.textContent.includes('Contacto') || h2.textContent.includes('Contact'))) {
-                            h2.textContent = texts.contactTitle;
-                            if (subtitle) subtitle.textContent = texts.contactSubtitle;
-                            section.setAttribute('data-checked-contact', 'true');
-                        }
-                    }
-                });
+                // BUSCAR Y ACTUALIZAR TODAS LAS SECCIONES
+                updateSectionText('h2.text-4xl', /Sobre Mí|About Me/, texts.aboutTitle);
+                updateSectionText('p.text-gray-300', /Soy un desarrollador|I am a developer/, texts.aboutDescription);
+                updateSectionText('h3.text-2xl', /Habilidades Principales|Core Skills/, texts.coreSkills);
+                updateSectionText('h2.text-4xl', /Proyectos Destacados|Featured Projects/, texts.projectsTitle);
+                updateSectionText('h2.text-4xl', /Certificaciones|Certifications/, texts.certificationsTitle);
+                updateSectionText('h2.text-4xl', /Contacto|Contact/, texts.contactTitle);
+                updateSectionText('p.text-xl.text-gray-300', /¿Tienes un proyecto|Have a project/, texts.contactSubtitle);
 
                 // FOOTER
                 const footerText = document.querySelector('footer p.text-gray-400');
-                if (footerText && !footerText.hasAttribute('data-translated')) {
+                if (footerText) {
                     footerText.textContent = texts.rights;
-                    footerText.setAttribute('data-translated', 'true');
                 }
 
                 // BOTONES DE IDIOMA
@@ -391,35 +347,47 @@
                     }
                 });
 
-                appliedTranslations = true;
                 isApplyingTranslations = false;
-                console.log('✅ Traducciones aplicadas');
+                console.log('✅ Traducciones aplicadas para:', lang);
             }
 
-            // 5. CONFIGURAR BOTONES DE IDIOMA
-            function setupLanguageButtons() {
-                document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20').forEach(btn => {
-                    const newBtn = btn.cloneNode(true);
-                    btn.parentNode.replaceChild(newBtn, btn);
-
-                    newBtn.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-
-                        const currentLang = getCurrentLanguage();
-                        const newLang = currentLang === 'es' ? 'en' : 'es';
-
-                        console.log('🌐 Cambiando idioma a:', newLang);
-
-                        localStorage.setItem('preferredLanguage', newLang);
-                        appliedTranslations = false; // Reset flag
-                        applyTranslations(newLang);
-                        showFeedback(newLang);
-                    });
+            // 5. FUNCIÓN AUXILIAR PARA ACTUALIZAR TEXTO EN SECCIONES
+            function updateSectionText(selector, pattern, newText) {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach(element => {
+                    if (pattern.test(element.textContent)) {
+                        element.textContent = newText;
+                    }
                 });
             }
 
-            // 6. FEEDBACK VISUAL
+            // 6. CONFIGURAR BOTONES DE IDIOMA
+            function setupLanguageButtons() {
+                const buttons = document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20');
+
+                buttons.forEach(btn => {
+                    // Solo agregar listener si no lo tiene
+                    if (!btn.hasAttribute('data-lang-listener')) {
+                        btn.setAttribute('data-lang-listener', 'true');
+
+                        btn.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            const currentLang = getCurrentLanguage();
+                            const newLang = currentLang === 'es' ? 'en' : 'es';
+
+                            console.log('🌐 Cambiando idioma:', currentLang, '→', newLang);
+
+                            localStorage.setItem('preferredLanguage', newLang);
+                            applyTranslations(newLang);
+                            showFeedback(newLang);
+                        });
+                    }
+                });
+            }
+
+            // 7. FEEDBACK VISUAL
             function showFeedback(lang) {
                 const existing = document.querySelector('.lang-feedback');
                 if (existing) existing.remove();
@@ -430,7 +398,7 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            background: linear-gradient(135deg, #10b981, #059669);
             color: white;
             padding: 12px 20px;
             border-radius: 8px;
@@ -445,34 +413,47 @@
                 setTimeout(() => feedback.remove(), 2000);
             }
 
-            // 7. INICIALIZAR UNA SOLA VEZ
+            // 8. INICIALIZAR - APLICAR TRADUCCIONES INMEDIATAMENTE
             function initialize() {
                 const currentLang = getCurrentLanguage();
-                console.log('💾 Idioma:', currentLang);
+                console.log('🚀 Inicializando con idioma:', currentLang);
 
-                // Aplicar traducciones después de un delay para asegurar DOM
+                // Aplicar traducciones inmediatamente
+                applyTranslations(currentLang);
+
+                // Configurar botones
+                setupLanguageButtons();
+
+                // Verificar después de un tiempo que todo se aplicó
                 setTimeout(() => {
-                    if (!appliedTranslations) {
-                        applyTranslations(currentLang);
-                    }
-                }, 100);
-
-                // Configurar botones después de otro delay
-                setTimeout(() => {
-                    setupLanguageButtons();
-                }, 200);
-
-                console.log('✅ Sistema listo');
+                    console.log('✅ Sistema completamente inicializado');
+                    console.log('Idioma aplicado:', currentLang);
+                }, 500);
             }
 
-            // INICIAR
-            initialize();
+            // 9. EJECUTAR INMEDIATAMENTE Y CUANDO EL DOM ESTÉ LISTO
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initialize);
+            } else {
+                // Si el DOM ya está listo, ejecutar inmediatamente
+                initialize();
+            }
         });
 
-        // Comandos de consola
-        window.forceLang = function (lang) {
-            localStorage.setItem('preferredLanguage', lang);
-            location.reload();
+        // Comandos de consola para debug
+        window.debugLanguage = function () {
+            console.log('=== DEBUG IDIOMA ===');
+            console.log('Idioma guardado:', localStorage.getItem('preferredLanguage'));
+            console.log('Botones encontrados:', document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20').length);
+            console.log('Texto hero:', document.querySelector('p.text-lg.md\\:text-xl.text-gray-300')?.textContent?.substring(0, 50) + '...');
+        };
+
+        window.forceLanguage = function (lang) {
+            if (['es', 'en'].includes(lang)) {
+                console.log('🔧 Forzando idioma:', lang);
+                localStorage.setItem('preferredLanguage', lang);
+                location.reload();
+            }
         };
     </script>
 </body>
