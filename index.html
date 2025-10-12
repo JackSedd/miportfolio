@@ -204,255 +204,102 @@
         </div>
     </div>
     <script>
-        // SISTEMA COMPLETO - TRADUCCIONES AL CARGAR Y AL CAMBIAR
+        // CONEXIÓN AL SISTEMA i18n DEL BUNDLE
         document.addEventListener('DOMContentLoaded', function () {
-            console.log('🚀 Iniciando sistema de idiomas');
+            console.log('🔗 Conectando con el sistema i18n del bundle...');
 
-            // 1. TRADUCCIONES COMPLETAS
-            const translations = {
-                en: {
-                    // Navegación
-                    home: "Home",
-                    about: "About Me",
-                    projects: "Projects",
-                    certifications: "Certifications",
-                    contact: "Contact",
-
-                    // Hero Section
-                    heroDescription: "I am a specialized and certified Salesforce developer with experience in artificial intelligence integration, process automation, and high-impact CRM project management.",
-                    viewProjects: "View Projects",
-
-                    // About Section
-                    aboutTitle: "About Me",
-                    aboutDescription: "I am a developer specialized in the Salesforce ecosystem with extensive experience in platform administration, custom solution development, and artificial intelligence technologies. My focus is on creating efficient solutions that drive business growth.",
-                    coreSkills: "Core Skills",
-
-                    // Projects Section
-                    projectsTitle: "Featured Projects",
-
-                    // Certifications Section  
-                    certificationsTitle: "Certifications",
-
-                    // Contact Section
-                    contactTitle: "Contact",
-                    contactSubtitle: "Have a project in mind? Let's talk!",
-
-                    // Footer
-                    rights: "© 2024 Santiago Carrillo. All rights reserved."
-                },
-                es: {
-                    // Navegación
-                    home: "Inicio",
-                    about: "Sobre Mí",
-                    projects: "Proyectos",
-                    certifications: "Certificaciones",
-                    contact: "Contacto",
-
-                    // Hero Section
-                    heroDescription: "Soy un desarrollador especializado y certificado en Salesforce con experiencia en integración de inteligencia artificial, automatización de procesos y gestión de proyectos CRM de alto impacto.",
-                    viewProjects: "Ver Proyectos",
-
-                    // About Section
-                    aboutTitle: "Sobre Mí",
-                    aboutDescription: "Soy un desarrollador especializado en el ecosistema Salesforce con amplia experiencia en administración de plataformas, desarrollo de soluciones personalizadas y tecnologías de inteligencia artificial. Mi enfoque se centra en crear soluciones eficientes que impulsen el crecimiento empresarial.",
-                    coreSkills: "Habilidades Principales",
-
-                    // Projects Section
-                    projectsTitle: "Proyectos Destacados",
-
-                    // Certifications Section
-                    certificationsTitle: "Certificaciones",
-
-                    // Contact Section
-                    contactTitle: "Contacto",
-                    contactSubtitle: "¿Tienes un proyecto en mente? ¡Hablemos!",
-
-                    // Footer
-                    rights: "© 2024 Santiago Carrillo. Todos los derechos reservados."
+            // Función para obtener la instancia de i18n
+            function getI18nInstance() {
+                // Estrategia 1: Buscar la instancia global 'We' (i18n)
+                if (window.We && typeof window.We.changeLanguage === 'function') {
+                    console.log('✅ i18n encontrado como: window.We');
+                    return window.We;
                 }
-            };
 
-            // 2. CONTROL PARA EVITAR BUCLE
-            let isApplyingTranslations = false;
+                // Estrategia 2: Buscar en el contexto de React
+                const root = document.getElementById('root');
+                if (root && root.__reactInternalInstance$) {
+                    try {
+                        let fiberNode = root.__reactInternalInstance$;
+                        while (fiberNode) {
+                            if (fiberNode.memoizedProps && fiberNode.memoizedProps.i18n) {
+                                console.log('✅ i18n encontrado en React props');
+                                return fiberNode.memoizedProps.i18n;
+                            }
+                            fiberNode = fiberNode.child;
+                        }
+                    } catch (e) {
+                        console.warn('No se pudo acceder al contexto de React:', e);
+                    }
+                }
 
-            // 3. OBTENER IDIOMA ACTUAL
-            function getCurrentLanguage() {
-                const savedLang = localStorage.getItem('preferredLanguage');
-                console.log('💾 Idioma guardado:', savedLang);
-                return savedLang || 'es';
+                console.error('❌ No se pudo encontrar la instancia de i18n');
+                return null;
             }
 
-            // 4. APLICAR TRADUCCIONES
-            function applyTranslations(lang) {
-                if (isApplyingTranslations) return;
-
-                isApplyingTranslations = true;
-                console.log('🎨 Aplicando traducciones:', lang);
-
-                const texts = translations[lang];
-                if (!texts) {
-                    isApplyingTranslations = false;
-                    return;
-                }
-
-                // NAVEGACIÓN
-                const navButtons = document.querySelectorAll('header button.text-white.hover\\:text-blue-400');
-                const navKeys = ['home', 'about', 'projects', 'certifications', 'contact'];
-
-                navButtons.forEach((button, index) => {
-                    if (navKeys[index] && button.querySelector('span.relative.z-10')) {
-                        const span = button.querySelector('span.relative.z-10');
-                        span.textContent = texts[navKeys[index]];
-                    }
-                });
-
-                // HERO SECTION
-                const heroText = document.querySelector('p.text-lg.md\\:text-xl.text-gray-300');
-                if (heroText) {
-                    heroText.textContent = texts.heroDescription;
-                }
-
-                const projectBtn = document.querySelector('button.bg-gradient-to-r.from-blue-600.to-blue-700');
-                if (projectBtn) {
-                    const icon = projectBtn.querySelector('i.ri-eye-line');
-                    if (icon) {
-                        projectBtn.innerHTML = '';
-                        projectBtn.appendChild(icon.cloneNode(true));
-                        projectBtn.appendChild(document.createTextNode(' ' + texts.viewProjects));
-                    }
-                }
-
-                // BUSCAR Y ACTUALIZAR TODAS LAS SECCIONES
-                updateSectionText('h2.text-4xl', /Sobre Mí|About Me/, texts.aboutTitle);
-                updateSectionText('p.text-gray-300', /Soy un desarrollador|I am a developer/, texts.aboutDescription);
-                updateSectionText('h3.text-2xl', /Habilidades Principales|Core Skills/, texts.coreSkills);
-                updateSectionText('h2.text-4xl', /Proyectos Destacados|Featured Projects/, texts.projectsTitle);
-                updateSectionText('h2.text-4xl', /Certificaciones|Certifications/, texts.certificationsTitle);
-                updateSectionText('h2.text-4xl', /Contacto|Contact/, texts.contactTitle);
-                updateSectionText('p.text-xl.text-gray-300', /¿Tienes un proyecto|Have a project/, texts.contactSubtitle);
-
-                // FOOTER
-                const footerText = document.querySelector('footer p.text-gray-400');
-                if (footerText) {
-                    footerText.textContent = texts.rights;
-                }
-
-                // BOTONES DE IDIOMA
-                document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20').forEach(btn => {
-                    const span = btn.querySelector('span');
-                    if (span) {
-                        span.textContent = span.textContent.includes('footer.language')
-                            ? `footer.language: ${lang.toUpperCase()}`
-                            : lang.toUpperCase();
-                    }
-                });
-
-                isApplyingTranslations = false;
-                console.log('✅ Traducciones aplicadas para:', lang);
-            }
-
-            // 5. FUNCIÓN AUXILIAR PARA ACTUALIZAR TEXTO EN SECCIONES
-            function updateSectionText(selector, pattern, newText) {
-                const elements = document.querySelectorAll(selector);
-                elements.forEach(element => {
-                    if (pattern.test(element.textContent)) {
-                        element.textContent = newText;
-                    }
-                });
-            }
-
-            // 6. CONFIGURAR BOTONES DE IDIOMA
+            // Configurar botones de idioma
             function setupLanguageButtons() {
                 const buttons = document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20');
 
                 buttons.forEach(btn => {
-                    // Solo agregar listener si no lo tiene
-                    if (!btn.hasAttribute('data-lang-listener')) {
-                        btn.setAttribute('data-lang-listener', 'true');
+                    const newBtn = btn.cloneNode(true);
+                    btn.parentNode.replaceChild(newBtn, btn);
 
-                        btn.addEventListener('click', function (e) {
-                            e.preventDefault();
-                            e.stopPropagation();
+                    newBtn.addEventListener('click', async function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
 
-                            const currentLang = getCurrentLanguage();
-                            const newLang = currentLang === 'es' ? 'en' : 'es';
+                        const i18n = getI18nInstance();
+                        if (!i18n) {
+                            console.error('No se puede cambiar el idioma: i18n no disponible');
+                            return;
+                        }
 
-                            console.log('🌐 Cambiando idioma:', currentLang, '→', newLang);
+                        const currentLang = i18n.language || 'es';
+                        const newLang = currentLang === 'es' ? 'en' : 'es';
 
-                            localStorage.setItem('preferredLanguage', newLang);
-                            applyTranslations(newLang);
-                            showFeedback(newLang);
-                        });
-                    }
+                        console.log(`🔄 Cambiando idioma via i18n: ${currentLang} -> ${newLang}`);
+
+                        try {
+                            // Usar el método nativo de i18n
+                            await i18n.changeLanguage(newLang);
+                            console.log('✅ Idioma cambiado exitosamente. Recargando...');
+
+                            // Recargar para aplicar todos los cambios
+                            setTimeout(() => location.reload(), 100);
+
+                        } catch (error) {
+                            console.error('Error al cambiar idioma:', error);
+                        }
+                    });
                 });
             }
 
-            // 7. FEEDBACK VISUAL
-            function showFeedback(lang) {
-                const existing = document.querySelector('.lang-feedback');
-                if (existing) existing.remove();
-
-                const feedback = document.createElement('div');
-                feedback.className = 'lang-feedback';
-                feedback.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-            z-index: 10000;
-            font-weight: 600;
-            font-size: 14px;
-        `;
-                feedback.textContent = lang === 'en' ? '🌍 Changed to English' : '🌍 Cambiado a Español';
-                document.body.appendChild(feedback);
-
-                setTimeout(() => feedback.remove(), 2000);
-            }
-
-            // 8. INICIALIZAR - APLICAR TRADUCCIONES INMEDIATAMENTE
-            function initialize() {
-                const currentLang = getCurrentLanguage();
-                console.log('🚀 Inicializando con idioma:', currentLang);
-
-                // Aplicar traducciones inmediatamente
-                applyTranslations(currentLang);
-
-                // Configurar botones
+            // Inicializar
+            setTimeout(() => {
                 setupLanguageButtons();
 
-                // Verificar después de un tiempo que todo se aplicó
-                setTimeout(() => {
-                    console.log('✅ Sistema completamente inicializado');
-                    console.log('Idioma aplicado:', currentLang);
-                }, 500);
-            }
-
-            // 9. EJECUTAR INMEDIATAMENTE Y CUANDO EL DOM ESTÉ LISTO
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initialize);
-            } else {
-                // Si el DOM ya está listo, ejecutar inmediatamente
-                initialize();
-            }
+                // Verificar estado actual
+                const i18n = getI18nInstance();
+                if (i18n) {
+                    console.log('🌐 Estado i18n:', {
+                        lenguaje: i18n.language,
+                        inicializado: i18n.isInitialized,
+                        idiomas: i18n.languages
+                    });
+                }
+            }, 1000);
         });
 
-        // Comandos de consola para debug
-        window.debugLanguage = function () {
-            console.log('=== DEBUG IDIOMA ===');
-            console.log('Idioma guardado:', localStorage.getItem('preferredLanguage'));
-            console.log('Botones encontrados:', document.querySelectorAll('button.flex.items-center.space-x-2.bg-blue-600\\/20').length);
-            console.log('Texto hero:', document.querySelector('p.text-lg.md\\:text-xl.text-gray-300')?.textContent?.substring(0, 50) + '...');
-        };
-
-        window.forceLanguage = function (lang) {
-            if (['es', 'en'].includes(lang)) {
-                console.log('🔧 Forzando idioma:', lang);
-                localStorage.setItem('preferredLanguage', lang);
-                location.reload();
+        // Comando de emergencia para consola
+        window.debugI18n = function () {
+            console.log('=== DEBUG i18n ===');
+            console.log('We (i18n):', window.We);
+            if (window.We) {
+                console.log('Lenguaje:', window.We.language);
+                console.log('Inicializado:', window.We.isInitialized);
+                console.log('Idiomas:', window.We.languages);
+                console.log('Recursos:', window.We.options?.resources);
             }
         };
     </script>
