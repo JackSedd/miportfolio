@@ -15034,7 +15034,7 @@ function e1() {
     const {
         t: r,
         i18n: i
-    } = Zn("common"), s = i.language === "es" ? Pb : {
+    } = Zn("common"), s = {
         items: [{
             title: "AgentForce – Transcripción Inteligente de Reuniones",
             description: "Desarrollo de un proceso automatizado con AgentForce para transcribir reuniones, extraer palabras clave y generar alertas inteligentes según el contenido.",
@@ -15174,7 +15174,7 @@ function t1() {
     const {
         t: r,
         i18n: i
-    } = Zn("common"), s = i.language === "es" ? Wb : {
+    } = Zn("common"), s = {
         items: [{
             name: "Salesforce Certified Platform Developer I",            
             issuer: "Salesforce",
@@ -15659,4 +15659,5 @@ _v.createRoot(document.getElementById("root")).render(b.jsx(q.StrictMode, {
         console && console.warn && console.warn("i18n replacer error", e);
     }
 })();
+
 /* ---- END: i18n DOM replacer (injected) ---- */
