@@ -14819,19 +14819,54 @@ const Fb = {
     },
     Pb = {
         items: [{
-            title: "Sistema CRM Avanzado",
-            description: "Desarrollo completo de un sistema CRM personalizado en Salesforce con integración de IA para análisis predictivo de ventas.",
-            technologies: ["Salesforce", "Apex", "Lightning", "Einstein AI"],
+            title: "AgentForce – Transcripción Inteligente de Reuniones",
+            description: "Desarrollo de un proceso automatizado con AgentForce para transcribir reuniones, extraer palabras clave y generar alertas inteligentes según el contenido.",
+            technologies: ["AgentForce", "Einstein AI", "Apex", "NLP", "Automation"],
             link: "#"
         }, {
-            title: "Automatización de Procesos",
-            description: "Implementación de flujos automatizados para optimizar procesos de negocio y reducir tiempo de respuesta en un 60%.",
+            title: "CRM Avanzado con IA Predictiva",
+            description: "Desarrollo completo de un sistema CRM personalizado en Salesforce, incorporando inteligencia artificial para análisis predictivo de ventas y generación de insights comerciales.",
+            technologies: ["Salesforce", "Apex", "Lightning Web Components", "Einstein AI"],
+            link: "#"
+        }, {
+            title: "Chatbot Inteligente Integrado con Service Cloud",
+            description: "Creación de un chatbot con procesamiento de lenguaje natural totalmente integrado con Salesforce Service Cloud para atención al cliente 24/7.",
+            technologies: ["Einstein Bots", "Python", "REST APIs", "NLP"],
+            link: "#"
+        }, {
+            title: "Integración Salesforce con WhatsApp y Freshdesk",
+            description: "Desarrollo de integraciones nativas con WhatsApp Business y Freshdesk para centralizar interacciones con clientes dentro de Salesforce.",
+            technologies: ["Salesforce API", "WhatsApp Business API", "Freshdesk API", "LWC"],
+            link: "#"
+        }, {
+            title: "Portal del Cliente en Lightning Web Components",
+            description: "Creación de un portal de autoservicio moderno y seguro para clientes, con acceso a casos, documentos y solicitudes personalizadas.",
+            technologies: ["LWC", "Apex", "Salesforce Experience Cloud"],
+            link: "#"
+        }, {
+            title: "Automatización Integral de Procesos",
+            description: "Diseño e implementación de flujos automatizados para optimizar procesos críticos de negocio, reduciendo un 60% los tiempos operativos.",
             technologies: ["Flow Builder", "Process Builder", "Apex Triggers"],
             link: "#"
         }, {
-            title: "Integración AI Chatbot",
-            description: "Desarrollo de chatbot inteligente integrado con Salesforce Service Cloud para atención al cliente 24/7.",
-            technologies: ["Einstein Bots", "Python", "REST APIs", "Natural Language Processing"],
+            title: "Integración Segura Navision – Salesforce",
+            description: "Desarrollo de un agente de escucha en .NET para integrar Microsoft Dynamics Navision con Salesforce, estableciendo una conexión cifrada para transferencia de archivos sensibles.",
+            technologies: [".NET", "Navision", "Salesforce API", "Encryption"],
+            link: "#"
+        }, {
+            title: "Digitalización Paperless con DataMatrix",
+            description: "Implementación de un sistema de gestión documental sin papel mediante códigos DataMatrix para trazabilidad y validación segura de documentos.",
+            technologies: ["DataMatrix", "Salesforce", "Navision", "PDF Automation"],
+            link: "#"
+        }, {
+            title: "Implementación Completa de ERP (Navision)",
+            description: "Liderazgo en la implementación y despliegue de Microsoft Dynamics Navision en un vertical de laboratorio, adaptando módulos a procesos específicos.",
+            technologies: ["Navision ERP", "SQL Server", "C/AL"],
+            link: "#"
+        }, {
+            title: "Flujos Automatizados con n8n",
+            description: "Implementación de workflows avanzados con n8n para automatizar procesos entre Salesforce, herramientas de mensajería y sistemas externos.",
+            technologies: ["n8n", "Salesforce API", "Webhook", "Automation"],
             link: "#"
         }]
     },
@@ -14861,6 +14896,11 @@ const Fb = {
             issuer: "RacksLabs",
             date: "2025",
             image: "assets/a_data/rackslabs.png"
+        }, {
+            name: "Certified n8n",
+            issuer: "n8n",
+            date: "2025",
+            image: "assets/a_data/n8nv2.png"
         }]
     };
 
@@ -14996,19 +15036,54 @@ function e1() {
         i18n: i
     } = Zn("common"), s = i.language === "es" ? Pb : {
         items: [{
-            title: "Advanced CRM System",
-            description: "Complete development of a custom CRM system in Salesforce with AI integration for predictive sales analytics.",
-            technologies: ["Salesforce", "Apex", "Lightning", "Einstein AI"],
+            title: "AgentForce – Transcripción Inteligente de Reuniones",
+            description: "Desarrollo de un proceso automatizado con AgentForce para transcribir reuniones, extraer palabras clave y generar alertas inteligentes según el contenido.",
+            technologies: ["AgentForce", "Einstein AI", "Apex", "NLP", "Automation"],
             link: "#"
         }, {
-            title: "Process Automation",
-            description: "Implementation of automated flows to optimize business processes and reduce response time by 60%.",
+            title: "CRM Avanzado con IA Predictiva",
+            description: "Desarrollo completo de un sistema CRM personalizado en Salesforce, incorporando inteligencia artificial para análisis predictivo de ventas y generación de insights comerciales.",
+            technologies: ["Salesforce", "Apex", "Lightning Web Components", "Einstein AI"],
+            link: "#"
+        }, {
+            title: "Chatbot Inteligente Integrado con Service Cloud",
+            description: "Creación de un chatbot con procesamiento de lenguaje natural totalmente integrado con Salesforce Service Cloud para atención al cliente 24/7.",
+            technologies: ["Einstein Bots", "Python", "REST APIs", "NLP"],
+            link: "#"
+        }, {
+            title: "Integración Salesforce con WhatsApp y Freshdesk",
+            description: "Desarrollo de integraciones nativas con WhatsApp Business y Freshdesk para centralizar interacciones con clientes dentro de Salesforce.",
+            technologies: ["Salesforce API", "WhatsApp Business API", "Freshdesk API", "LWC"],
+            link: "#"
+        }, {
+            title: "Portal del Cliente en Lightning Web Components",
+            description: "Creación de un portal de autoservicio moderno y seguro para clientes, con acceso a casos, documentos y solicitudes personalizadas.",
+            technologies: ["LWC", "Apex", "Salesforce Experience Cloud"],
+            link: "#"
+        }, {
+            title: "Automatización Integral de Procesos",
+            description: "Diseño e implementación de flujos automatizados para optimizar procesos críticos de negocio, reduciendo un 60% los tiempos operativos.",
             technologies: ["Flow Builder", "Process Builder", "Apex Triggers"],
             link: "#"
         }, {
-            title: "AI Chatbot Integration",
-            description: "Development of intelligent chatbot integrated with Salesforce Service Cloud for 24/7 customer service.",
-            technologies: ["Einstein Bots", "Python", "REST APIs", "Natural Language Processing"],
+            title: "Integración Segura Navision – Salesforce",
+            description: "Desarrollo de un agente de escucha en .NET para integrar Microsoft Dynamics Navision con Salesforce, estableciendo una conexión cifrada para transferencia de archivos sensibles.",
+            technologies: [".NET", "Navision", "Salesforce API", "Encryption"],
+            link: "#"
+        }, {
+            title: "Digitalización Paperless con DataMatrix",
+            description: "Implementación de un sistema de gestión documental sin papel mediante códigos DataMatrix para trazabilidad y validación segura de documentos.",
+            technologies: ["DataMatrix", "Salesforce", "Navision", "PDF Automation"],
+            link: "#"
+        }, {
+            title: "Implementación Completa de ERP (Navision)",
+            description: "Liderazgo en la implementación y despliegue de Microsoft Dynamics Navision en un vertical de laboratorio, adaptando módulos a procesos específicos.",
+            technologies: ["Navision ERP", "SQL Server", "C/AL"],
+            link: "#"
+        }, {
+            title: "Flujos Automatizados con n8n",
+            description: "Implementación de workflows avanzados con n8n para automatizar procesos entre Salesforce, herramientas de mensajería y sistemas externos.",
+            technologies: ["n8n", "Salesforce API", "Webhook", "Automation"],
             link: "#"
         }]
     };
@@ -15125,6 +15200,11 @@ function t1() {
             issuer: "RacksLabs",
             date: "2025",
             image: "assets/a_data/rackslabs.png"
+        }, {
+            name: "Certified n8n",
+            issuer: "n8n",
+            date: "2025",
+            image: "assets/a_data/n8nv2.png"
         }]
     };
     return b.jsx("section", {
