@@ -14844,18 +14844,23 @@ const Fb = {
         }, {
             name: "Salesforce Certified Administrator",
             issuer: "Salesforce",
-            date: "2022",
-            image: "https://readdy.ai/api/search-image?query=Salesforce%20Administrator%20certification%20badge%20with%20blue%20and%20white%20colors%2C%20professional%20technology%20certification%20design%2C%20clean%20modern%20badge%20style%20with%20Salesforce%20trailhead%20branding%20elements&width=200&height=200&seq=cert2&orientation=squarish"
+            date: "2025",
+            image: "assets/a_data/administrator.png"
+        }, {
+            name: "Salesforce Agentforce Specialist",
+            issuer: "Salesforce",
+            date: "2025",
+            image: "https://readdy.ai/api/search-image?query=Google%20Cloud%20AI%20Machine%20Learning%20certification%20badge%20with%20blue%20and%20white%20colors%2C%20professional%20technology%20certification%20design%2C%20clean%20modern%20badge%20style%20with%20Google%20Cloud%20branding%20elements&width=200&height=200&seq=cert3&orientation=squarish"
         }, {
             name: "AI and Machine Learning Fundamentals",
             issuer: "Google Cloud",
             date: "2023",
             image: "https://readdy.ai/api/search-image?query=Google%20Cloud%20AI%20Machine%20Learning%20certification%20badge%20with%20blue%20and%20white%20colors%2C%20professional%20technology%20certification%20design%2C%20clean%20modern%20badge%20style%20with%20Google%20Cloud%20branding%20elements&width=200&height=200&seq=cert3&orientation=squarish"
         }, {
-            name: "Project Management Professional",
-            issuer: "PMI",
-            date: "2022",
-            image: "https://readdy.ai/api/search-image?query=PMI%20Project%20Management%20Professional%20certification%20badge%20with%20blue%20and%20gold%20colors%2C%20professional%20certification%20design%2C%20clean%20modern%20badge%20style%20with%20PMI%20branding%20elements&width=200&height=200&seq=cert4&orientation=squarish"
+            name: "Especialista en IA",
+            ssuer: "RacksLabs",
+            date: "2025",
+            image: "assets/a_data/rackslabs.png"
         }]
     };
 
