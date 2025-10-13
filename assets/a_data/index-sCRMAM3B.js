@@ -13592,7 +13592,7 @@ var nb = q.createElement(tb, null),
             } : {
                 error: r.error !== void 0 ? r.error : i.error,
                 location: i.location,
-                revalidation: r.revalidation || i.revalidation
+                revalidation: r.revalidation || i.revalidation 
             }
         }
         componentDidCatch(r, i) {
@@ -14858,7 +14858,7 @@ const Fb = {
             image: "https://readdy.ai/api/search-image?query=Google%20Cloud%20AI%20Machine%20Learning%20certification%20badge%20with%20blue%20and%20white%20colors%2C%20professional%20technology%20certification%20design%2C%20clean%20modern%20badge%20style%20with%20Google%20Cloud%20branding%20elements&width=200&height=200&seq=cert3&orientation=squarish"
         }, {
             name: "Especialista en IA",
-            ssuer: "RacksLabs",
+            issuer: "RacksLabs",
             date: "2025",
             image: "assets/a_data/rackslabs.png"
         }]
@@ -15101,7 +15101,7 @@ function t1() {
         i18n: i
     } = Zn("common"), s = i.language === "es" ? Wb : {
         items: [{
-            name: "Salesforce Certified Platform Developer I",
+            name: "Salesforce Certified Platform Developer I",            
             issuer: "Salesforce",
             date: "2024",
             image: "assets/a_data/developer.png"
@@ -15117,12 +15117,12 @@ function t1() {
             image: "assets/a_data/agentforce.png"
         }, {
             name: "AI and Machine Learning Fundamentals",
-            ssuer: "Google Cloud",
+            issuer: "Google Cloud",
             date: "2023",
             image: "https://readdy.ai/api/search-image?query=Google%20Cloud%20AI%20Machine%20Learning%20certification%20badge%20with%20blue%20and%20white%20colors%2C%20professional%20technology%20certification%20design%2C%20clean%20modern%20badge%20style%20with%20Google%20Cloud%20branding%20elements&width=200&height=200&seq=cert3&orientation=squarish"
         }, {
             name: "Especialista en IA",
-            ssuer: "RacksLabs",
+            issuer: "RacksLabs",
             date: "2025",
             image: "assets/a_data/rackslabs.png"
         }]
