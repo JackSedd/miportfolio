@@ -66,3 +66,73 @@ main section button[type="submit"]:hover {
     transform: translateY(-3px) !important;
     box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5) !important;
 }
+
+/* ===== OCULTAR BOTONES DE IDIOMA ===== */
+/* Ocultar botón de idioma en el header */
+header button:has(.ri-global-line),
+header button:has(span:contains("ES")),
+header button:has(span:contains("EN")),
+header .flex.items-center.space-x-2:has(.ri-global-line) {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+}
+
+/* Ocultar botón de idioma en el footer */
+footer button:has(.ri-global-line),
+footer button:has(span:contains("ES")),
+footer button:has(span:contains("EN")),
+footer button:has(span:contains("language")),
+footer .flex.items-center.space-x-2:has(.ri-global-line),
+footer span:contains("ES"),
+footer span:contains("EN"),
+footer span:contains("language") {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+}
+
+/* Selector más específico para el botón de idioma del footer */
+footer .flex.items-center.space-x-6 > button:last-child,
+footer .flex.items-center.space-x-6 > .flex:has(.ri-global-line) {
+    display: none !important;
+}
+
+/* Ocultar cualquier elemento que contenga texto de idioma */
+button:contains("ES"),
+button:contains("EN"),
+button:contains("language"),
+span:contains("ES"), 
+span:contains("EN"),
+span:contains("language"),
+[class*="language"] {
+    display: none !important;
+}
+
+/* Selector para el contenedor específico del botón de idioma */
+button.flex.items-center.space-x-2.text-white,
+button.flex.items-center.space-x-2.text-gray-400 {
+    display: none !important;
+}
+
+/* Asegurar que el espacio se redistribuya */
+header .hidden.md\:flex.items-center.space-x-8,
+footer .flex.items-center.space-x-6 {
+    gap: 1.5rem !important;
+}
+
+/* Ocultar específicamente el botón con ícono global */
+button .ri-global-line,
+button:has(.ri-global-line) {
+    display: none !important;
+}
