@@ -14839,8 +14839,8 @@ const Fb = {
         items: [{
             name: "Salesforce Certified Platform Developer I",
             issuer: "Salesforce",
-            date: "2023",
-            image: "https://readdy.ai/api/search-image?query=Salesforce%20Platform%20Developer%20certification%20badge%20with%20blue%20and%20white%20colors%2C%20professional%20technology%20certification%20design%2C%20clean%20modern%20badge%20style%20with%20Salesforce%20trailhead%20branding%20elements&width=200&height=200&seq=cert1&orientation=squarish"
+            date: "2024",
+            image: "assets/a_data/developer.png"
         }, {
             name: "Salesforce Certified Administrator",
             issuer: "Salesforce",
@@ -14850,7 +14850,7 @@ const Fb = {
             name: "Salesforce Agentforce Specialist",
             issuer: "Salesforce",
             date: "2025",
-            image: "https://readdy.ai/api/search-image?query=Google%20Cloud%20AI%20Machine%20Learning%20certification%20badge%20with%20blue%20and%20white%20colors%2C%20professional%20technology%20certification%20design%2C%20clean%20modern%20badge%20style%20with%20Google%20Cloud%20branding%20elements&width=200&height=200&seq=cert3&orientation=squarish"
+            image: "assets/a_data/agentforce.png"
         }, {
             name: "AI and Machine Learning Fundamentals",
             issuer: "Google Cloud",
@@ -15104,7 +15104,7 @@ function t1() {
             name: "Salesforce Certified Platform Developer I",
             issuer: "Salesforce",
             date: "2024",
-            image: "https://readdy.ai/api/search-image?query=Salesforce%20Platform%20Developer%20certification%20badge%20with%20blue%20and%20white%20colors%2C%20professional%20technology%20certification%20design%2C%20clean%20modern%20badge%20style%20with%20Salesforce%20trailhead%20branding%20elements&width=200&height=200&seq=cert1&orientation=squarish"
+            image: "assets/a_data/developer.png"
         }, {
             name: "Salesforce Certified Administrator",
             issuer: "Salesforce",
@@ -15114,12 +15114,12 @@ function t1() {
             name: "Salesforce Agentforce Specialist",
             issuer: "Salesforce",
             date: "2025",
-            image: "https://readdy.ai/api/search-image?query=Google%20Cloud%20AI%20Machine%20Learning%20certification%20badge%20with%20blue%20and%20white%20colors%2C%20professional%20technology%20certification%20design%2C%20clean%20modern%20badge%20style%20with%20Google%20Cloud%20branding%20elements&width=200&height=200&seq=cert3&orientation=squarish"
+            image: "assets/a_data/agentforce.png"
         }, {
             name: "AI and Machine Learning Fundamentals",
             ssuer: "Google Cloud",
             date: "2023",
-            image: "assets/a_data/rackslabs.png"
+            image: "https://readdy.ai/api/search-image?query=Google%20Cloud%20AI%20Machine%20Learning%20certification%20badge%20with%20blue%20and%20white%20colors%2C%20professional%20technology%20certification%20design%2C%20clean%20modern%20badge%20style%20with%20Google%20Cloud%20branding%20elements&width=200&height=200&seq=cert3&orientation=squarish"
         }, {
             name: "Especialista en IA",
             ssuer: "RacksLabs",
