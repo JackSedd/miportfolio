@@ -2,7 +2,19 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://jacksedd.github.io/miportfolio/</loc>
-    <lastmod>2025-10-10</lastmod>
+    <lastmod>2025-10-22</lastmod>
     <priority>1.00</priority>
+  </url>
+  <url>
+    <loc>https://jacksedd.github.io/miportfolio/#about</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://jacksedd.github.io/miportfolio/#projects</loc>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://jacksedd.github.io/miportfolio/#contact</loc>
+    <priority>0.80</priority>
   </url>
 </urlset>
