@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jacksedd.github.io/miportfolio/sitemap.xml
