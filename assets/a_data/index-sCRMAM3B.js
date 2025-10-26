@@ -14761,7 +14761,7 @@ function Jb() {
                     })]
                 }), b.jsx("p", {
                     className: "text-lg md:text-xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed",
-                    children: r("Impulsando la innovación con soluciones Salesforce inteligentes, integrando IA y automatización para transformar negocios.")
+                    children: r("Transformo negocios con soluciones Salesforce inteligentes, combinando automatización, IA y estrategia CRM para lograr experiencias digitales de alto impacto.")
                 }), b.jsxs("div", {
                     className: "flex flex-col sm:flex-row gap-6 justify-center items-center",
                     children: [b.jsxs(lg, {
@@ -15174,7 +15174,7 @@ function t1() {
     const {
         t: r,
         i18n: i
-    } = Zn("common"), s = {
+    } = Zn("common"), s = i.language === "es" ? Wb : {
         items: [{
             name: "Salesforce Certified Platform Developer I",            
             issuer: "Salesforce",
@@ -15537,7 +15537,7 @@ _v.createRoot(document.getElementById("root")).render(b.jsx(q.StrictMode, {
         var map = {
             "hero.name": "Santiago Carrillo",
             "hero.title": "✨ Salesforce & AI Developer",
-            "hero.description": "Impulsando la innovación con soluciones Salesforce inteligentes, integrando IA y automatización para transformar negocios.",
+            "hero.description": "Transformo negocios con soluciones Salesforce inteligentes, combinando automatización, IA y estrategia CRM para lograr experiencias digitales de alto impacto.",
             "hero.tagline": "Transformando procesos con IA y Salesforce",
             "hero.viewProjects": "Ver proyectos",
             "hero.linkedin": "LinkedIn",
@@ -15659,5 +15659,4 @@ _v.createRoot(document.getElementById("root")).render(b.jsx(q.StrictMode, {
         console && console.warn && console.warn("i18n replacer error", e);
     }
 })();
-
 /* ---- END: i18n DOM replacer (injected) ---- */
